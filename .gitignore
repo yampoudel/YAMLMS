@@ -1,0 +1,32 @@
+# --- Dependencies & Packages ---
+/node_modules
+/vendor
+
+# --- Environment & Secrets ---
+.env
+.env.backup
+.env.production
+auth.json
+/storage/*.key
+
+# --- Compiled Assets (Vite) ---
+/public/build
+/public/hot
+/public/storage
+
+# --- Testing & Cache ---
+/.phpunit.cache
+.phpunit.result.cache
+
+# --- IDEs & Editors ---
+/.fleet
+/.idea
+/.vscode
+
+# --- Logs & Error Reports ---
+npm-debug.log
+yarn-error.log
+
+# --- Local Virtual Machines ---
+Homestead.json
+Homestead.yaml
