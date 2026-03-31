@@ -15,22 +15,22 @@ return new class extends Migration
             $table->id();
             $table->enum('role', ['Admin', 'Teacher', 'Learner'])->default('Learner');
             $table->string('login')->unique();
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable(); // Good for security
             $table->string('password'); // REQUIRED for authentication
             $table->rememberToken();    // REQUIRED for "Remember Me" functionality
             $table->enum('status', ['Active', 'Disabled'])->default('Active');
-            $table->date('birthdate')->nullable();
+            $table->date('birth_date')->nullable();
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->string('postcode')->nullable();
             $table->string('suburb')->nullable();
-            $table->timestamp('joindate')->useCurrent();
-            $table->timestamp('lastlogin')->nullable();
+            $table->timestamp('join_date')->useCurrent();
+            $table->timestamp('last_login')->nullable();
             $table->timestamps();
         });
     }

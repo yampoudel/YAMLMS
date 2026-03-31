@@ -23,11 +23,25 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $join = fake()->dateTimeBetween('-5 years', '-1 year');
+
         return [
-            'name' => fake()->name(),
+            'role' => fake()->randomElement(['Admin', 'Teacher', 'Learner']),
+            'login' => Str::random(10),
+            'first_name' => fake()->firstname(),
+            'last_name' =>fake()->lastname(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'birth_date' => fake()->dateTimeBetween('-60 years','-16 years')->format('Y-m-d'),
+            'mobile' => fake()->numerify('##########'),
+            'phone' => fake()->numerify('##########'),
+            'country' => fake()->country(),
+            'city' => fake()->city(),
+            'suburb' => fake()->streetName(),
+            'postcode' => fake()->numerify('####'),
+            'join_date' => $join->format('Y-m-d'),
+            'last_login' => fake()->dateTimeBetween($join, 'now')->format('Y-m-d'),
             'remember_token' => Str::random(10),
         ];
     }
