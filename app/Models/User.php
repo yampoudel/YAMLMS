@@ -21,12 +21,12 @@ class User extends Authenticatable
     protected $fillable = [
         'role',
         'login',
-        'firstname',
-        'lastname',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'status',
-        'birthdate',
+        'birth_date',
         'phone',
         'mobile',
         'country',
@@ -38,7 +38,7 @@ class User extends Authenticatable
     // Get name
     public function getNameAttribute()
     {
-        return "{$this->firstname} {$this->lastname}";
+        return "{$this->first_name} {$this->last_name}";
     }
 
     /**
@@ -51,8 +51,8 @@ class User extends Authenticatable
         'password' => 'hashed',
 
         //adding custom datefield here
-        'joindate' => 'datetime',
-        'lastlogin' => 'datetime',
-        'birthdate' => 'datetime'
+        'join_date' => 'datetime',
+        'last_login' => 'datetime',
+        'birth_date' => 'datetime'
     ];
 }
