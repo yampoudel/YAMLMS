@@ -24,7 +24,7 @@ class UserController extends Controller
         //Adding Page Information
         $page_info = [];
         $page_info['title']= 'ADD A NEW USER';
-
+        
         return view ('admin.user.create', compact('page_info'));
     }
 
@@ -32,7 +32,7 @@ class UserController extends Controller
     
         $validated_users = $request->validate([
             'role'       => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
-            'login'      => 'required|string|max:255|unique:lms_users,login', // Assumes 'users' table
+            'login'      => 'required|string|max:255|unique:lms_users,login',
             'first_name' => 'required|string|max:255',
             'last_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:lms_users,email', // Added unique check for email too
@@ -65,9 +65,36 @@ class UserController extends Controller
     // Edit user page
     public function edit (string $id) : View {
        //Get user data
-        $user_details = User::find($id);
+        $user = User::findOrfail($id);
 
-        return view('admin.user.edituser', compact('user_details'));
+        return view('admin.user.edit', compact('user'));
+    }
+
+    //Update user
+    public function update(Request $request, User $user) : RedirectResponse {
+
+        //Validate users data
+        $validated_user = $request->validate([
+            'role'       => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
+            'login' => ['required', Rule::unique('lms_users', 'login')->ignore($user->id, 'id')],
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'required|string|max:255',
+            'email' => ['required', Rule::unique('lms_users', 'email')->ignore($user->id, 'id')],
+            'status'     => ['required', Rule::in(['Active', 'Disabled'])],
+            'birth_date' => 'required|date',
+            'phone'      => 'required|string|max:255',
+            'mobile'     => 'required|string|max:255',
+            'country'    => 'required|string|max:255',
+            'city'       => 'required|string|max:255',
+            'postcode'   => 'required|string|max:255',
+            'suburb'     => 'required|string|max:255',
+        ]);
+        
+        //Update user
+        $user->update($validated_user);
+        
+       return redirect()->route('users.edit', $user->id)->with('success', 'User details has been updated successfully. ');
+
     }
 
 }
