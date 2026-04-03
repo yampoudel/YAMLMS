@@ -53,6 +53,6 @@ class User extends Authenticatable
         //adding custom datefield here
         'join_date' => 'datetime',
         'last_login' => 'datetime',
-        'birth_date' => 'datetime'
+        'birth_date' => 'date'
     ];
 }
