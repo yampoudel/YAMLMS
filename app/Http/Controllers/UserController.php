@@ -97,4 +97,14 @@ class UserController extends Controller
 
     }
 
+    //Deleteing user
+    public function destroy(User $user) : RedirectResponse {
+        //Will add other checkes in future when needed
+        //Like not deleted by self, only authorized user can delete etc
+    
+        $user->delete();
+        
+        return redirect()->route('users.index')->with('success', 'User has been deleted successfully');
+    }
+
 }
