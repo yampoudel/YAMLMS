@@ -18,8 +18,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//User module routes 
-Route::get('/user', [UserController::class, 'index']);
-Route::get('/user/{id}', [UserController::class, 'show']);
+//User module routes creates all route for crud operation
+Route::resource('users', Usercontroller::class);
+
 
 require __DIR__.'/auth.php';
