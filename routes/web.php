@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController; 
+use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,6 +21,9 @@ Route::middleware('auth')->group(function () {
 
 //User module routes creates all route for crud operation
 Route::resource('users', Usercontroller::class);
+
+//Course Module routes
+Route::resource('courses', CourseController::class);
 
 
 require __DIR__.'/auth.php';
