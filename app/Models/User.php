@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -55,4 +56,22 @@ class User extends Authenticatable
         'last_login' => 'datetime',
         'birth_date' => 'date'
     ];
+
+    //Get the list of enrolments for this user
+    public function enrolments(): HasMany
+    {
+        return $this->HasMany(Enrolment::class);
+    }
+
+    //Get the list of courses belongs to this user
+    public function courses(): BelongsToMany
+    {
+        return $this->BelongsToMany(
+            Course::class, 
+            'lms_enrolments',//bridging table
+            'user_id',
+            'course_id'
+        )->withPivot('enrolled_at', 'enrolled_by')
+         ->withTimeStamps();
+    }
 }

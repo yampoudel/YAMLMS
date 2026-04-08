@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrolmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,8 +23,10 @@ Route::middleware('auth')->group(function () {
 //User module routes creates all route for crud operation
 Route::resource('users', Usercontroller::class);
 
-//Course Module routes
+//Course module routes
 Route::resource('courses', CourseController::class);
 
+//Enrolment module routes
+Route::resource('enrolments', EnrolmentController::class);
 
 require __DIR__.'/auth.php';
