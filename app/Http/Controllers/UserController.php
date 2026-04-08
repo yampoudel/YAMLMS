@@ -9,18 +9,21 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use App\Models\Course;
 
 class UserController extends Controller
 {
     //list users
-    public function index() : View {
+    public function index() : View 
+    {
         
         $users = User::paginate(15);
-        
+      
         return view('admin.user.index', compact('users'));
     }
 
-    public function create (): View {
+    public function create (): View 
+    {
         //Adding Page Information
         $page_info = [];
         $page_info['title']= 'ADD A NEW USER';
@@ -28,7 +31,8 @@ class UserController extends Controller
         return view ('admin.user.create', compact('page_info'));
     }
 
-    public function store(Request $request) : RedirectResponse {
+    public function store(Request $request) : RedirectResponse 
+    {
     
         $validated_users = $request->validate([
             'role'       => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
@@ -63,7 +67,8 @@ class UserController extends Controller
     }
 
     // Edit user page
-    public function edit (string $id) : View {
+    public function edit (string $id) : View 
+    {
        //Get user data
         $user = User::findOrfail($id);
 
@@ -71,7 +76,8 @@ class UserController extends Controller
     }
 
     //Update user
-    public function update(Request $request, User $user) : RedirectResponse {
+    public function update(Request $request, User $user) : RedirectResponse 
+    {
 
         //Validate users data
         $validated_user = $request->validate([
@@ -98,7 +104,8 @@ class UserController extends Controller
     }
 
     //Deleteing user
-    public function destroy(User $user) : RedirectResponse {
+    public function destroy(User $user) : RedirectResponse 
+    {
         //Will add other checkes in future when needed
         //Like not deleted by self, only authorized user can delete etc
     
