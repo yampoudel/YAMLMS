@@ -30,6 +30,12 @@ class Course extends Model
     //Get the list of users belongs to this course
     public function users(): BelongsToMany
     {
-        return $this->BelongsToMany(User::class, 'lms_enrolments', 'course_id','user_id' );
+        return $this->BelongsToMany(
+            User::class, 
+            'lms_enrolments',
+            'id', 
+            'course_id',
+            'user_id' 
+        );
     }
 }

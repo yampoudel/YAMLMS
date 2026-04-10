@@ -27,6 +27,8 @@ Route::resource('users', Usercontroller::class);
 Route::resource('courses', CourseController::class);
 
 //Enrolment module routes
-Route::resource('enrolments', EnrolmentController::class);
+Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
+Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])-> name('enrolments.create');
+Route::post('enrolments/store/{user}', [EnrolmentController::class, 'store'])->name('enrolments.store');
 
 require __DIR__.'/auth.php';
