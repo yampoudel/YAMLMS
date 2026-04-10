@@ -39,6 +39,22 @@ class EnrolmentSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
             ],
+            [
+            'user_id' => 7,
+            'course_id' => 6,
+            'enrolled_at' => now(),
+            'enrolled_by' => 2,
+            'created_at' => now(),
+            'updated_at' => now(),
+            ],
+            [
+            'user_id' => 8,
+            'course_id' => 4,
+            'enrolled_at' => now(),
+            'enrolled_by' => 2,
+            'created_at' => now(),
+            'updated_at' => now(),
+            ],
         ]);
     }
 }

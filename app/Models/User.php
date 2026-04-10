@@ -69,9 +69,16 @@ class User extends Authenticatable
         return $this->BelongsToMany(
             Course::class, 
             'lms_enrolments',//bridging table
+            'id',
             'user_id',
             'course_id'
         )->withPivot('enrolled_at', 'enrolled_by')
          ->withTimeStamps();
+    }
+
+    //Check admin user
+    public function isAdmin(): bool
+    {
+        return $this->role === 'Admin';
     }
 }

@@ -2,13 +2,17 @@
 
     {{-- Header Section --}}
     <x-slot name="header">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between">
             <h1 class="text-2xl font-bold text-gray-800">
                 Users
             </h1>
 
             <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 + Add User
+            </a>
+
+            <a href="{{ route('enrolments.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Enrolment List
             </a>
         </div>
     </x-slot>
@@ -42,7 +46,7 @@
                                 <th class="px-4 py-2 border">Suburb</th>
                                 <th class="px-4 py-2 border">Join Date</th>
                                 <th class="px-4 py-2 border">Last Login</th>
-                                <th class="px-4 py-2 border" colspan="2">Actions</th>
+                                <th class="px-4 py-2 border" colspan="3">Actions</th>
                             </tr>
                         </thead>
 
@@ -67,6 +71,13 @@
                                         <a href="{{ route('users.edit', $user->id) }}"
                                             class="text-blue-600 hover:underline">
                                             Edit
+                                        </a>
+                                    </td>
+
+                                    <td class="px-4 py-2 border">
+                                        <a href="{{ route('enrolments.create', $user) }}"
+                                            class="text-blue-600 hover:underline">
+                                            Course Enrol
                                         </a>
                                     </td>
 

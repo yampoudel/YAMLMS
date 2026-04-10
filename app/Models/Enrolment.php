@@ -37,5 +37,13 @@ class Enrolment extends Model
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class);
+    }   
+
+    //Check if the enrolment already exists
+    public static function alreadyExists(int $user_id, int $course_id): bool
+    {
+      return self::where('user_id', $user_id)
+                   ->where('course_id', $course_id)
+                   ->exists();
     }
 }
