@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Validation\Rule;
@@ -10,18 +9,24 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\Course;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
-    //list users
+    /**
+     * Display a listing of the resource/user.
+     */
     public function index() : View 
     {
-        
         $users = User::paginate(15);
       
         return view('admin.user.index', compact('users'));
     }
 
+    /**
+     * Show the form for creating a new resource/user
+     */
     public function create (): View 
     {
         //Adding Page Information
@@ -31,42 +36,30 @@ class UserController extends Controller
         return view ('admin.user.create', compact('page_info'));
     }
 
-    public function store(Request $request) : RedirectResponse 
+    /**
+     * Store a newly created resource/user in storage.
+     */
+    public function store(StoreUserRequest $request) : RedirectResponse 
     {
-    
-        $validated_users = $request->validate([
-            'role'       => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
-            'login'      => 'required|string|max:255|unique:lms_users,login',
-            'first_name' => 'required|string|max:255',
-            'last_name'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:lms_users,email', // Added unique check for email too
-            'password'   => ['required', Password::min(8)],
-            'status'     => ['required', Rule::in(['Active', 'Disabled'])],
-            'birth_date' => 'required|date',
-            'phone'      => 'required|string|max:255',
-            'mobile'     => 'required|string|max:255',
-            'country'    => 'required|string|max:255',
-            'city'       => 'required|string|max:255',
-            'postcode'   => 'required|string|max:255',
-            'suburb'     => 'required|string|max:255',
-        ]);
+        $validated_user = $request->validated();
 
         //Hash the password before saving!
-        $validated_users['password'] = Hash::make($validated_users['password']);
+        $validated_user['password'] = Hash::make($validated_user['password']);
 
         //Deafult value
-        $validated_users['join_date'] = now();
-        $validated_users['last_login'] = null;
+        $validated_user['join_date'] = now();
+        $validated_user['last_login'] = null;
 
         // Create the user in the database
-        User::create($validated_users);
+        User::create($validated_user);
 
         //Redirect with a success message
         return redirect()->route('users.index')->with('success', 'User created successfully.');
-
     }
 
-    // Edit user page
+    /**
+     * Show the form for editing the specified resource/user.
+     */
     public function edit (string $id) : View 
     {
        //Get user data
@@ -75,32 +68,15 @@ class UserController extends Controller
         return view('admin.user.edit', compact('user'));
     }
 
-    //Update user
-    public function update(Request $request, User $user) : RedirectResponse 
+    /**
+     * Update the specified resource/user in storage.
+     */
+    public function update(UpdateUserRequest $request, User $user) : RedirectResponse 
     {
-
-        //Validate users data
-        $validated_user = $request->validate([
-            'role'       => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
-            'login' => ['required', Rule::unique('lms_users', 'login')->ignore($user->id, 'id')],
-            'first_name' => 'required|string|max:255',
-            'last_name'  => 'required|string|max:255',
-            'email' => ['required', Rule::unique('lms_users', 'email')->ignore($user->id, 'id')],
-            'status'     => ['required', Rule::in(['Active', 'Disabled'])],
-            'birth_date' => 'required|date',
-            'phone'      => 'required|string|max:255',
-            'mobile'     => 'required|string|max:255',
-            'country'    => 'required|string|max:255',
-            'city'       => 'required|string|max:255',
-            'postcode'   => 'required|string|max:255',
-            'suburb'     => 'required|string|max:255',
-        ]);
-        
         //Update user
-        $user->update($validated_user);
+        $user->update($request->validated());
         
-       return redirect()->route('users.edit', $user->id)->with('success', 'User details has been updated successfully. ');
-
+        return redirect()->route('users.edit', $user->id)->with('success', 'User details has been updated successfully. ');
     }
 
     //Deleteing user
@@ -108,10 +84,8 @@ class UserController extends Controller
     {
         //Will add other checkes in future when needed
         //Like not deleted by self, only authorized user can delete etc
-    
         $user->delete();
         
         return redirect()->route('users.index')->with('success', 'User has been deleted successfully');
     }
-
 }
