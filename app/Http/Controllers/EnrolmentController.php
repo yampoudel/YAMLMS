@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Services\EnrolmentService;
+use App\Http\Requests\StoreEnrolmentRequest;
 
 class EnrolmentController extends Controller
 {
@@ -43,9 +44,10 @@ class EnrolmentController extends Controller
     /**
      * Store a newly created resource/enrolment in storage.
      */
-    public function store(Request $request, User $user): RedirectResponse
+    public function store(StoreEnrolmentRequest $request, User $user): RedirectResponse
     {
-        //Enroll User
+        //Data is already validated
+        
        $this->enrolmentService->enrollUser($user->id, $request->course_id, auth()->user()->id);
 
        return redirect()->route('enrolments.index', $user)->with('success', 'User has been enrolled to this course successfully');

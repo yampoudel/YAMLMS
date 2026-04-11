@@ -2,7 +2,7 @@
 
     {{-- Header Section --}}
     <x-slot name="header">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-800">
                 Users
             </h1>

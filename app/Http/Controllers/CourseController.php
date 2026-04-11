@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Http\Requests\StoreCourseRequest;
+use App\Http\Requests\UpdateCourseRequest;
 
 class CourseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the course.
      */
     public function index(): View
     {
@@ -20,7 +21,7 @@ class CourseController extends Controller
     }
 
     /**
-     * Show the form for creating a new resourse/course
+     * Show the form for creating a new course
      */
     public function create(): View
     {
@@ -31,15 +32,12 @@ class CourseController extends Controller
     }
 
     /**
-     * Store a newly created resource/course in storage.
+     * Store a newly created course in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCourseRequest $request): RedirectResponse
     {
-      //validate incoming data
-        $validated_course = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string'
-        ]);
+        //Course data is already validated
+        $validated_course = $request->validated();
   
         //Adding course created Id
         $validated_course['created_by'] = auth()->id();
@@ -52,7 +50,7 @@ class CourseController extends Controller
     }
 
     /**
-     * Display the specified resource/Course.
+     * Display the specified Course.
      */
     public function show(Course $course)
     {
@@ -60,7 +58,7 @@ class CourseController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource/Course.
+     * Show the form for editing the specified course.
      */
     public function edit(Course $course): View
     {
@@ -69,31 +67,25 @@ class CourseController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified course in storage.
      */
-    public function update(Request $request, Course $course): RedirectResponse
+    public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
-        //validating incoming data for update
-        $validated_course = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string'
-        ]);
-
         //will add/edit updated_by in future if required
 
         //updating the user
-        $course->update($validated_course);
+        $course->update($request->validated());
 
         return redirect()->route('courses.edit', $course)->with('success', 'Course has been updated successfully');    
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified course from storage.
      */
     public function destroy(Course $course): RedirectResponse
     {
         //Some permission to delete will be added in the future
-    
+        
         //Delete Course
         $course->delete();
 
