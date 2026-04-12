@@ -68,7 +68,7 @@
                                     <td class="px-4 py-2 border">{{ $user->last_login }}</td>
 
                                     <td class="px-4 py-2 border">
-                                        <a href="{{ route('users.edit', $user->id) }}"
+                                        <a href="{{ route('users.edit', $user) }}"
                                             class="text-blue-600 hover:underline">
                                             Edit
                                         </a>

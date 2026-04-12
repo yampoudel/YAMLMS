@@ -10,9 +10,9 @@ class EnrolmentService
     /**
      * Get the list of enrolments
      */
-    public function getEnrolmentList($perPage = 15): LengthAwarePaginator 
+    public function getEnrolmentList($per_page = 15): LengthAwarePaginator 
     {
-       return  Enrolment::with(['user', 'course'])->paginate($perPage);
+       return  Enrolment::with(['user', 'course'])->paginate($per_page);
     }
 
     /**
