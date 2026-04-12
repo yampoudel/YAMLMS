@@ -7,15 +7,21 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
+use App\Services\CourseService;
 
 class CourseController extends Controller
 {
+    /**
+     * Dependency Injection from CourseService
+     */
+    public function __construct(protected CourseService $courseService) { }
+
     /**
      * Display a listing of the course.
      */
     public function index(): View
     {
-        $courses = Course::paginate(15);
+        $courses = $this->courseService->getAllCourses(15);
 
         return  view('admin.course.index', compact('courses'));
     }
@@ -36,16 +42,9 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request): RedirectResponse
     {
-        //Course data is already validated
-        $validated_course = $request->validated();
-  
-        //Adding course created Id
-        $validated_course['created_by'] = auth()->id();
-
-        //Add course to the table
-        Course::create($validated_course);
-
-        //redirect to the index page
+        //Course data is already validated and store course here
+        $this->courseService->storeCourse($request->validated());
+    
         return redirect()->route('courses.index')->with('success', 'Course has been created successfully.');
     }
 
@@ -71,10 +70,8 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
-        //will add/edit updated_by in future if required
-
-        //updating the user
-        $course->update($request->validated());
+        //Course data is already validate and updating here
+        $this->courseService->updateCourse($course, $request->validated());
 
         return redirect()->route('courses.edit', $course)->with('success', 'Course has been updated successfully');    
     }
@@ -84,11 +81,8 @@ class CourseController extends Controller
      */
     public function destroy(Course $course): RedirectResponse
     {
-        //Some permission to delete will be added in the future
+        $this->courseService->deleteCourse($course);
         
-        //Delete Course
-        $course->delete();
-
         return redirect()->route('courses.index')->with('success', 'Course has been deleted successfully');
     }
 }
