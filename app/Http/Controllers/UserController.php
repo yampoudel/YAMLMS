@@ -74,16 +74,15 @@ class UserController extends Controller
      * Remove the specified course from storage
      */
     public function destroy(User $user) // Laravel injects this as $user
-{
-    // Pass the $user variable into the authorize check
-    $this->authorize('delete', $user); 
+    {   
+        // Pass the $user variable into the authorize check
+        $this->authorize('delete', $user); 
 
-    try {
-        $this->userService->deleteUser($user);
-        return redirect()->route('users.index')->with('success', 'User deleted.');
-    } catch (\Exception $e) {
-        return redirect()->route('users.index')->with('error', $e->getMessage());
+        try {
+            $this->userService->deleteUser($user);
+            return redirect()->route('users.index')->with('success', 'User has been deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
     }
-}
-
 }
