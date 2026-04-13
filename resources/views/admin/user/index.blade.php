@@ -28,6 +28,12 @@
                     </div>
                 @endif
 
+                @if (session('error'))
+                    <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; margin-bottom: 1rem;">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="bg-white shadow-sm sm:rounded-lg p-4 overflow-x-auto">
 
                     <table class="min-w-full border border-gray-200">

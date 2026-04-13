@@ -47,7 +47,7 @@ class UserService
     public function deleteUser(User $user): bool
     {
         //Prevent deleting own account
-        if (auth()->user()->id === $user->id) {
+        if (auth()->id() === $user->id) {
             throw new \Exception('You cannot delete your own account');
         }
 

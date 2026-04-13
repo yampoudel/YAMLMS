@@ -20,15 +20,25 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//Admin middleware require both logged in (auth) and must be admin
+Route::middleware(['auth', 'admin'])->group(function(){
+    //User module routes 
+    Route::resource('users', UserController::class);
+    //Course module routes
+    Route::resource('courses', CourseController::class);
+    //Enrolment module routes
+    Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
+    Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])-> name('enrolments.create');
+    Route::post('enrolments/store/{user}', [EnrolmentController::class, 'store'])->name('enrolments.store');
+});
+
 //User module routes creates all route for crud operation
-Route::resource('users', Usercontroller::class);
+
 
 //Course module routes
-Route::resource('courses', CourseController::class);
+
 
 //Enrolment module routes
-Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
-Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])-> name('enrolments.create');
-Route::post('enrolments/store/{user}', [EnrolmentController::class, 'store'])->name('enrolments.store');
+
 
 require __DIR__.'/auth.php';

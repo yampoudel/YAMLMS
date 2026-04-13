@@ -76,6 +76,12 @@ class User extends Authenticatable
          ->withTimeStamps();
     }
 
+    //Check super admin
+    public function isSuperAdmin(): bool
+    {
+        return $this->email === config('app.super_admin_email', env('SUPER_ADMIN_EMAIL'));
+    }
+
     //Check admin user
     public function isAdmin(): bool
     {

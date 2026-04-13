@@ -11,6 +11,7 @@ use App\Models\Course;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -72,10 +73,16 @@ class UserController extends Controller
     /**
      * Remove the specified course from storage
      */
-    public function destroy(User $user) : RedirectResponse 
-    {
-       $this->userService->deleteUser($user);
-        
-       return redirect()->route('users.index')->with('success', 'User has been deleted successfully');
+    public function destroy(User $user) // Laravel injects this as $user
+    {   
+        // Pass the $user variable into the authorize check
+        $this->authorize('delete', $user); 
+
+        try {
+            $this->userService->deleteUser($user);
+            return redirect()->route('users.index')->with('success', 'User has been deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
     }
 }
