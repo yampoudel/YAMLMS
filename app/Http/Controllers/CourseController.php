@@ -46,25 +46,21 @@ class CourseController extends Controller
         //Course data is already validated and store course here
         $this->courseService->storeCourse($request->validated());
     
-        return redirect()->route('courses.index')->with('success', 'Course has been created successfully.');
-    }
-
-    /**
-     * Display the specified Course.
-     */
-    public function show(Course $course)
-    {
-        //
+        return redirect()->route('courses.index')
+                         ->with('success', 'Course has been created successfully.');
     }
 
     /**
      * Show the form for editing the specified course.
      */
-    public function edit(Course $course): View
+    public function edit(Course $course): View | RedirectResponse
     {   
         // Uses the 'update' rule in CoursePolicy
-        Gate::authorize('update', $course);
-
+        if (Gate::denies('update', $course)) {
+            return redirect()->route('courses.index')
+                             ->with('error', 'You are not authorized to edit this course.');
+        }
+        
         //return edit page
         return view ('admin.course.edit', compact('course'));
     }
@@ -74,8 +70,10 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {   
-        // Uses the 'update' rule in CoursePolicy
-        Gate::authorize('update', $course);
+        if (Gate::denies('update', $course)) {
+            return redirect()->route('courses.index')
+                             ->with('error', 'You are not authorized to edit this course.');
+        }
 
         //Course data is already validate and updating here
         $this->courseService->updateCourse($course, $request->validated());
