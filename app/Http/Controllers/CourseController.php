@@ -99,7 +99,7 @@ class CourseController extends Controller
 
             return redirect()->route('courses.index')
                              ->with('success', 'Course has been deleted successfully');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->route('courses.index')
                              ->with('error', $e->getMessage());
         }     
