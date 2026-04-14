@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Services\CourseService;
+use Illuminate\Support\Facades\Gate;
 
 class CourseController extends Controller
 {
@@ -60,7 +61,10 @@ class CourseController extends Controller
      * Show the form for editing the specified course.
      */
     public function edit(Course $course): View
-    {
+    {   
+        // Uses the 'update' rule in CoursePolicy
+        Gate::authorize('update', $course);
+
         //return edit page
         return view ('admin.course.edit', compact('course'));
     }
@@ -69,11 +73,15 @@ class CourseController extends Controller
      * Update the specified course in storage.
      */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
-    {
+    {   
+        // Uses the 'update' rule in CoursePolicy
+        Gate::authorize('update', $course);
+
         //Course data is already validate and updating here
         $this->courseService->updateCourse($course, $request->validated());
 
-        return redirect()->route('courses.edit', $course)->with('success', 'Course has been updated successfully');    
+        return redirect()->route('courses.edit', $course)
+                         ->with('success', 'Course has been updated successfully');    
     }
 
     /**
@@ -81,8 +89,19 @@ class CourseController extends Controller
      */
     public function destroy(Course $course): RedirectResponse
     {
-        $this->courseService->deleteCourse($course);
-        
-        return redirect()->route('courses.index')->with('success', 'Course has been deleted successfully');
+        if (Gate::denies('delete', $course)) {
+            return redirect()->route('courses.index')
+                             ->with('error', 'You are not authorized to delete this course.');
+        } 
+
+        try {
+            $this->courseService->deleteCourse($course);
+
+            return redirect()->route('courses.index')
+                             ->with('success', 'Course has been deleted successfully');
+        } catch(\Exception $e) {
+            return redirect()->route('courses.index')
+                             ->with('error', $e->getMessage());
+        }     
     }
 }

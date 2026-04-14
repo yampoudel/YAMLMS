@@ -15,12 +15,12 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        //check user is logged in and user is an admin
-        if (auth()->check() && auth()->user()->isAdmin()) {
+        //check user is logged in and user is an admin or teacher
+        //May teacher will go to another middleware later
+        if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->role === 'Teacher')) {
             return $next($request);
         }
 
-        //if they are not admin stop them here
-        abort(403, 'Access Denied : Admins only');
+        abort(403, 'Access Denied : Staff Only');
     }
 }

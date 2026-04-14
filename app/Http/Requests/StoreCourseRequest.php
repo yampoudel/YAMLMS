@@ -12,8 +12,10 @@ class StoreCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        //Only admin can add the course
-        return auth()->user()->isAdmin();
+        $user = auth()->user();
+        
+        //Only admin/and teacher can add the course
+        return $user->isAdmin() || $user->role === 'Teacher';
     }
 
     /**

@@ -8,11 +8,22 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class CourseService
 {
     /**
-     * Get all courses
+     * Get all courses based on user
      */
     public function getAllCourses(int $per_page): LengthAwarePaginator
     {
-        return Course::paginate($per_page);
+        $user = auth()->user();
+
+        //Only admin can see all the courses
+        if (auth()->user()->isAdmin()) {
+            return Course::paginate($per_page);
+        }
+
+        //If teacher will see the courses which are created by themselves
+        if (auth()->user()->role === 'Teacher') {
+            return Course::where('created_by', $user->id)->paginate($per_page);
+        }
+        
     }
 
     /**

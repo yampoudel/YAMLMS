@@ -23,13 +23,15 @@
             <div class="bg-white shadow-sm sm:rounded-lg p-4">
                 {{-- Success Message --}}
                 @if (session('success'))
-                    <div id='notify_user_created' class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                    <div id='notify_success'
+                        class="mb-4 p-3 bg-green-100 text-green-700 border border-green-200 rounded">
                         {{ session('success') }}
                     </div>
                 @endif
 
+                {{-- Error Message --}}
                 @if (session('error'))
-                    <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; margin-bottom: 1rem;">
+                    <div id='notify_error' class="mb-4 p-3 bg-red-100 text-red-700 border border-red-200 rounded">
                         {{ session('error') }}
                     </div>
                 @endif
@@ -111,7 +113,7 @@
     @push('scripts')
         <script>
             setTimeout(() => {
-                const el = document.getElementById('notify_user_created');
+                const el = document.getElementById('notify_success');
                 if (el) {
                     el.style.transition = "opacity 0.8s ease";
                     el.style.opacity = "0";
