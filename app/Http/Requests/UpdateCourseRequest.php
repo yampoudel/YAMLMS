@@ -12,8 +12,11 @@ class UpdateCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        //Only admin can update the existing course
-        return auth()->user()->isAdmin();
+        //Get the course update from the route
+        $course = $this->route('course');
+
+        // This uses the 'update' rule from your CoursePolicy automatically!
+        return $this->user()->can('update', $course);
     }
 
     /**
