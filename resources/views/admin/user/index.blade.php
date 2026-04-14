@@ -21,18 +21,10 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-4">
-                {{-- Success Message --}}
-                @if (session('success'))
-                    <div id='notify_success'
-                        class="mb-4 p-3 bg-green-100 text-green-700 border border-green-200 rounded">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                {{-- Error Message --}}
-                @if (session('error'))
-                    <div id='notify_error' class="mb-4 p-3 bg-red-100 text-red-700 border border-red-200 rounded">
-                        {{ session('error') }}
+                @if (session('success') || session('error'))
+                    <div
+                        class="notify_message mb-4 p-3 border rounded {{ session('success') ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200' }}">
+                        {{ session('success') ?? session('error') }}
                     </div>
                 @endif
 
@@ -113,16 +105,18 @@
     @push('scripts')
         <script>
             setTimeout(() => {
-                const el = document.getElementById('notify_success');
-                if (el) {
+                // Select all messages in case there are multiple
+                const messages = document.querySelectorAll('.notify_message');
+
+                messages.forEach(el => {
                     el.style.transition = "opacity 0.8s ease";
                     el.style.opacity = "0";
 
                     setTimeout(() => {
                         el.remove();
-                    }, 800); // match transition duration
-                }
-            }, 3000); // wait 5 seconds before fading
+                    }, 800);
+                });
+            }, 3000);
         </script>
     @endpush
 </x-app-layout>

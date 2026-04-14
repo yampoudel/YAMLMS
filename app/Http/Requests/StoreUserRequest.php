@@ -14,8 +14,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        //Only admin add the user
-        return auth()->user()->isAdmin();
+       return true;
     }
 
     /**
