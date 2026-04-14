@@ -12,11 +12,7 @@ class UpdateCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        //Get the course update from the route
-        $course = $this->route('course');
-
-        // This uses the 'update' rule from your CoursePolicy automatically!
-        return $this->user()->can('update', $course);
+        return true;
     }
 
     /**
