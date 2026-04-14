@@ -7,7 +7,6 @@ use Illuminate\View\View;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
-use App\Models\Course;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
@@ -31,12 +30,16 @@ class UserController extends Controller
     /**
      * Show the form for creating a new user
      */
-    public function create (): View 
+    public function create(): View | RedirectResponse
     {
         //Adding Page Information
         $page_info = [];
         $page_info['title']= 'ADD A NEW USER';
-        
+
+        if (Gate::denies('create', User::class)) {
+            return redirect()->route('users.index')
+                             ->with('error', 'You are not authorized to create user.');
+        }
         return view ('admin.user.create', compact('page_info'));
     }
 
@@ -45,6 +48,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request) : RedirectResponse 
     {
+        if (Gate::denies('create', User::class)) {
+            return redirect()->route('users.index')
+                             ->with('error', 'You are not authorized to create user.');
+        }
+
         $this->userService->storeUser($request->validated());
         
         //Redirect with a success message
@@ -54,8 +62,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified user.
      */
-    public function edit (User $user) : View 
+    public function edit(User $user) : View | RedirectResponse
     {
+        if (Gate::denies('update', $user)) {
+            return redirect()->route('users.index')
+                             ->with('error', 'You are not authorized to update this user.');
+        }
+        
        return view('admin.user.edit', compact('user'));
     }
 
@@ -63,11 +76,16 @@ class UserController extends Controller
      * Update the specified user in storage.
      */
     public function update(UpdateUserRequest $request, User $user) : RedirectResponse 
-    {
+    {   
+        if (Gate::denies('update', $user)) {
+            return redirect()->route('users.index', $user)
+                             ->with('error', 'You are not authorized to update this user.');
+        }
+
         //Update user
         $this->userService->updateUser($user, $request->validated());
         
-        return redirect()->route('users.edit', $user->id)->with('success', 'User details has been updated successfully. ');
+        return redirect()->route('users.index', $user)->with('success', 'User details has been updated successfully. ');
     }
 
     /**
