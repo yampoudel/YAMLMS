@@ -17,10 +17,10 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-4">
-                {{-- Success Message --}}
-                @if (session('success'))
-                    <div id='notify_enrol_created' class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                        {{ session('success') }}
+                @if (session('success') || session('error'))
+                    <div
+                        class="notify_message mb-4 p-3 border rounded {{ session('success') ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200' }}">
+                        {{ session('success') ?? session('error') }}
                     </div>
                 @endif
 
@@ -48,13 +48,6 @@
                                     <td class="px-4 py-2 border">
                                         {{ date('Y-m-d', strtotime($enrolment->enrolled_at)) }}</td>
                                     <td class="px-4 py-2 border">
-                                        <a href="{{ route('enrolments.edit', $enrolment->id) }}"
-                                            class="text-blue-600 hover:underline">
-                                            Edit
-                                        </a>
-                                    </td>
-
-                                    <td class="px-4 py-2 border">
                                         <form action="{{ route('enrolments.destroy', $enrolment) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -77,16 +70,18 @@
     @push('scripts')
         <script>
             setTimeout(() => {
-                const el = document.getElementById('notify_enrolment_created');
-                if (el) {
+                // Select all messages in case there are multiple
+                const messages = document.querySelectorAll('.notify_message');
+
+                messages.forEach(el => {
                     el.style.transition = "opacity 0.8s ease";
                     el.style.opacity = "0";
 
                     setTimeout(() => {
                         el.remove();
-                    }, 800); // match transition duration
-                }
-            }, 3000); // wait 5 seconds before fading
+                    }, 800);
+                });
+            }, 3000);
         </script>
     @endpush
 </x-app-layout>

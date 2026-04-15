@@ -12,8 +12,26 @@ class EnrolmentService
      */
     public function getEnrolmentList($per_page = 15): LengthAwarePaginator 
     {
-       return  Enrolment::with(['user', 'course'])->paginate($per_page);
+      
+      $user = auth()->user();
+
+    // Admins see everything
+    if ($user->isAdmin()) {
+        return Enrolment::with(['user', 'course'])->paginate($per_page);
     }
+      
+    //Teachers see everyone in their own courses
+    if ($user->role === 'Teacher') {
+        return Enrolment::with(['user', 'course'])
+            ->whereHas('course', function($query) use ($user) {
+                $query->where('created_by', $user->id); // Matches Course owner
+            })
+            ->paginate($per_page);
+    }
+
+    //Safety Net: Return an empty paginator if no roles match
+    return Enrolment::whereRaw('1=0')->paginate($per_page);
+}
 
     /**
      * Enroll User

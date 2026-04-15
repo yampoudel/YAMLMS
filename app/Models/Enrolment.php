@@ -30,13 +30,13 @@ class Enrolment extends Model
    //Get the course for this enrolment
     public function course(): BelongsTo
     {
-       return $this->BelongsTo(Course::class); 
+       return $this->belongsTo(Course::class, 'course_id'); 
     }
 
     //Get the user for this enrolment
     public function user(): BelongsTo
     {
-        return $this->BelongsTo(User::class);
+        return $this->belongsTo(User::class);
     }   
 
     //Check if the enrolment already exists
