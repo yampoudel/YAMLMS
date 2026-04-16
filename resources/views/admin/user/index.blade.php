@@ -7,9 +7,11 @@
                 Users
             </h1>
 
-            <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                + Add User
-            </a>
+            @can('create', App\Models\User::class)
+                <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    + Add User
+                </a>
+            @endcan
 
             <a href="{{ route('enrolments.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Enrolment List
@@ -40,13 +42,12 @@
                                 <th class="px-4 py-2 border">Login</th>
                                 <th class="px-4 py-2 border">Email</th>
                                 <th class="px-4 py-2 border">Status</th>
-                                <th class="px-4 py-2 border">Country</th>
-                                <th class="px-4 py-2 border">City</th>
-                                <th class="px-4 py-2 border">Postcode</th>
-                                <th class="px-4 py-2 border">Suburb</th>
                                 <th class="px-4 py-2 border">Join Date</th>
                                 <th class="px-4 py-2 border">Last Login</th>
-                                <th class="px-4 py-2 border" colspan="3">Actions</th>
+
+                                @if (auth()->user()->isAdmin() || auth()->user()->role === 'Teacher')
+                                    <th class="px-4 py-2 border" colspan="3">Actions</th>
+                                @endif
                             </tr>
                         </thead>
 
@@ -60,19 +61,18 @@
                                     <td class="px-4 py-2 border">{{ $user->login }}</td>
                                     <td class="px-4 py-2 border">{{ $user->email }}</td>
                                     <td class="px-4 py-2 border">{{ $user->status }}</td>
-                                    <td class="px-4 py-2 border">{{ $user->country }}</td>
-                                    <td class="px-4 py-2 border">{{ $user->city }}</td>
-                                    <td class="px-4 py-2 border">{{ $user->postcode }}</td>
-                                    <td class="px-4 py-2 border">{{ $user->suburb }}</td>
                                     <td class="px-4 py-2 border">{{ $user->join_date }}</td>
                                     <td class="px-4 py-2 border">{{ $user->last_login }}</td>
 
-                                    <td class="px-4 py-2 border">
-                                        <a href="{{ route('users.edit', $user) }}"
-                                            class="text-blue-600 hover:underline">
-                                            Edit
-                                        </a>
-                                    </td>
+                                    @can('update', $user)
+                                        <td class="px-4 py-2 border">
+                                            <a href="{{ route('users.edit', $user) }}"
+                                                class="text-blue-600 hover:underline">
+                                                Edit
+                                            </a>
+                                        </td>
+                                    @endcan
+
 
                                     <td class="px-4 py-2 border">
                                         <a href="{{ route('enrolments.create', $user) }}"
@@ -81,14 +81,16 @@
                                         </a>
                                     </td>
 
-                                    <td class="px-4 py-2 border">
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-600 hover:text-red-800 hover:underline">Delete</button>
-                                        </form>
-                                    </td>
+                                    @can('delete', $user)
+                                        <td class="px-4 py-2 border">
+                                            <form action="{{ route('users.destroy', $user) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="text-red-600 hover:text-red-800 hover:underline">Delete</button>
+                                            </form>
+                                        </td>
+                                    @endcan
                                 </tr>
                             @endforeach
                         </tbody>
