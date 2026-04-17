@@ -21,8 +21,3 @@ it('prevents a teacher from editing another teacher course', function () {
 
 });
 
-test('example', function () {
-    $response = $this->get('/');
-
-    $response->assertStatus(200);
-});
