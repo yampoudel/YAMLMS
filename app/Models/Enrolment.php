@@ -2,48 +2,49 @@
 
 namespace App\Models;
 
+use Database\Factories\EnrolmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Enrolment extends Model
 {
-    /** @use HasFactory<\Database\Factories\EnrolmentFactory> */
+    /** @use HasFactory<EnrolmentFactory> */
     use HasFactory;
 
-    //Defining Custom Table
+    // Defining Custom Table
     protected $table = 'lms_enrolments';
 
-    //Mass Assignment 
+    // Mass Assignment
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'course_id',
         'enrolled_at',
-        'enrolled_by'
+        'enrolled_by',
     ];
 
-    //Casting Fields
+    // Casting Fields
     protected $cast = [
-        'enrolled_at' => 'datetime'
+        'enrolled_at' => 'datetime',
     ];
 
-   //Get the course for this enrolment
+    // Get the course for this enrolment
     public function course(): BelongsTo
     {
-       return $this->belongsTo(Course::class, 'course_id'); 
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
-    //Get the user for this enrolment
+    // Get the user for this enrolment
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }   
+    }
 
-    //Check if the enrolment already exists
+    // Check if the enrolment already exists
     public static function alreadyExists(int $user_id, int $course_id): bool
     {
-      return self::where('user_id', $user_id)
-                   ->where('course_id', $course_id)
-                   ->exists();
+        return self::where('user_id', $user_id)
+            ->where('course_id', $course_id)
+            ->exists();
     }
 }

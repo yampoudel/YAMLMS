@@ -19,10 +19,10 @@ return new class extends Migration
             $table->foreignId('enrolled_by')->nullable()->constrained('lms_users')->nullOnDelete();
             $table->timestamps();
 
-            //No duplicate enrolments
+            // No duplicate enrolments
             $table->unique(['user_id', 'course_id']);
-    
-            //For search by easier with enrolled date
+
+            // For search by easier with enrolled date
             $table->index('enrolled_at');
         });
     }

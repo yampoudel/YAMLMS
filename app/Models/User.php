@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -15,10 +15,11 @@ class User extends Authenticatable
 
     protected $table = 'lms_users';
 
-   /**
-    * The attributes that are mass assignable
-    *@var array<int, string>
-    */
+    /**
+     * The attributes that are mass assignable
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'role',
         'login',
@@ -33,7 +34,7 @@ class User extends Authenticatable
         'country',
         'city',
         'postcode',
-        'suburb'
+        'suburb',
     ];
 
     // Get name
@@ -51,38 +52,38 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
 
-        //adding custom datefield here
+        // adding custom datefield here
         'join_date' => 'datetime',
         'last_login' => 'datetime',
-        'birth_date' => 'date'
+        'birth_date' => 'date',
     ];
 
-    //Get the list of enrolments for this user
+    // Get the list of enrolments for this user
     public function enrolments(): HasMany
     {
         return $this->HasMany(Enrolment::class);
     }
 
-    //Get the list of courses belongs to this user
+    // Get the list of courses belongs to this user
     public function courses(): BelongsToMany
     {
         return $this->BelongsToMany(
-            Course::class, 
-            'lms_enrolments',//bridging table
+            Course::class,
+            'lms_enrolments',// bridging table
             'id',
             'user_id',
             'course_id'
         )->withPivot('enrolled_at', 'enrolled_by')
-         ->withTimeStamps();
+            ->withTimeStamps();
     }
 
-    //Check super admin
+    // Check super admin
     public function isSuperAdmin(): bool
     {
         return $this->email === config('app.super_admin_email', env('SUPER_ADMIN_EMAIL'));
     }
 
-    //Check admin user
+    // Check admin user
     public function isAdmin(): bool
     {
         return $this->role === 'Admin';

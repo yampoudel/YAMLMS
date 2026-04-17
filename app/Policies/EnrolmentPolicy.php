@@ -4,16 +4,15 @@ namespace App\Policies;
 
 use App\Models\Enrolment;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class EnrolmentPolicy
 {
     /**
      * Determine whether the user can view enrolments
      */
-    public function view(User $authenticated_user): bool
+    public function viewAny(User $authenticated_user): bool
     {
-       return $authenticated_user->isAdmin() || $authenticated_user->role === 'Teacher';
+        return $authenticated_user->isAdmin() || $authenticated_user->role === 'Teacher';
     }
 
     /**
@@ -23,11 +22,12 @@ class EnrolmentPolicy
     {
         if ($authenticated_user->isAdmin()) {
             return true;
-        } 
-    
+        }
+
+        // Teacher specific rules
         if ($authenticated_user->role === 'Teacher') {
-            // Must NOT be an Admin AND must NOT be themselves
-            return $targeted_user->role !== 'Admin' && $authenticated_user->id !== $targeted_user->id; 
+            // Teachers can enrol anyone EXCEPT Admins and themselves
+            return $targeted_user->role !== 'Admin' && $authenticated_user->id !== $targeted_user->id;
         }
 
         return false;
@@ -38,7 +38,7 @@ class EnrolmentPolicy
      */
     public function delete(User $authenticated_user, Enrolment $enrolment): bool
     {
-        //Admin can delete all enrolments
+        // Admin can delete all enrolments
         return $authenticated_user->isAdmin();
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController; 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrolmentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,31 +14,35 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Remove the standalone /dashboard and /profile groups
+// and merge them into the main auth group for better readability.
 
-//Admin middleware require both logged in (auth) and must be admin
-Route::middleware(['auth', 'admin'])->group(function(){
-    //User module routes 
-    Route::resource('users', UserController::class);
-    //Course module routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Standard Dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Profile Management
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
+    });
+
+    // SHARED: User List & Courses
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::resource('courses', CourseController::class);
-    //Enrolment module routes
+
+    // SHARED: Enrolment Module (Custom parameters)
     Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
-    Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])-> name('enrolments.create');
+    Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])->name('enrolments.create');
     Route::post('enrolments/store/{user}', [EnrolmentController::class, 'store'])->name('enrolments.store');
 });
 
-//User module routes creates all route for crud operation
-
-
-//Course module routes
-
-
-//Enrolment module routes
-
+// ADMIN ONLY: Protected by 'admin' middleware
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('users', UserController::class)->except(['index']);
+});
 
 require __DIR__.'/auth.php';

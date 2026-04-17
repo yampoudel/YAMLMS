@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Course;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CoursePolicy
 {
@@ -13,12 +12,12 @@ class CoursePolicy
      */
     public function update(User $authenticated_user, Course $target_course): bool
     {
-        //Check admin status
+        // Check admin status
         if ($authenticated_user->isAdmin()) {
             return true;
         }
-       
-        //Check teacher status
+
+        // Check teacher status
         if ($authenticated_user->role === 'Teacher' && $authenticated_user->id === $target_course->created_by) {
             return true;
         }
@@ -31,7 +30,7 @@ class CoursePolicy
      */
     public function delete(User $authenticated_user, Course $target_course): bool
     {
-        //Only admin user can delete the course
+        // Only admin user can delete the course
         return $authenticated_user->isAdmin();
     }
 }
