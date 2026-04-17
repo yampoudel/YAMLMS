@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
+use App\Models\Course;
 use App\Services\CourseService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 
 class CourseController extends Controller
 {
     /**
      * Dependency Injection from CourseService
      */
-    public function __construct(protected CourseService $courseService) { }
+    public function __construct(protected CourseService $courseService) {}
 
     /**
      * Display a listing of the course.
@@ -24,7 +24,7 @@ class CourseController extends Controller
     {
         $courses = $this->courseService->getAllCourses(15);
 
-        return  view('admin.course.index', compact('courses'));
+        return view('admin.course.index', compact('courses'));
     }
 
     /**
@@ -33,7 +33,7 @@ class CourseController extends Controller
     public function create(): View
     {
         $page_info = [];
-        $page_info['title']= 'Add a new course';
+        $page_info['title'] = 'Add a new course';
 
         return view('admin.course.create', compact('page_info'));
     }
@@ -43,43 +43,43 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request): RedirectResponse
     {
-        //Course data is already validated and store course here
+        // Course data is already validated and store course here
         $this->courseService->storeCourse($request->validated());
-    
+
         return redirect()->route('courses.index')
-                         ->with('success', 'Course has been created successfully.');
+            ->with('success', 'Course has been created successfully.');
     }
 
     /**
      * Show the form for editing the specified course.
      */
-    public function edit(Course $course): View | RedirectResponse
-    {   
+    public function edit(Course $course): View|RedirectResponse
+    {
         // Uses the 'update' rule in CoursePolicy
         if (Gate::denies('update', $course)) {
             return redirect()->route('courses.index')
-                             ->with('error', 'You are not authorized to edit this course.');
+                ->with('error', 'You are not authorized to edit this course.');
         }
-        
-        //return edit page
-        return view ('admin.course.edit', compact('course'));
+
+        // return edit page
+        return view('admin.course.edit', compact('course'));
     }
 
     /**
      * Update the specified course in storage.
      */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
-    {   
+    {
         if (Gate::denies('update', $course)) {
             return redirect()->route('courses.index')
-                             ->with('error', 'You are not authorized to edit this course.');
+                ->with('error', 'You are not authorized to edit this course.');
         }
 
-        //Course data is already validate and updating here
+        // Course data is already validate and updating here
         $this->courseService->updateCourse($course, $request->validated());
 
         return redirect()->route('courses.edit', $course)
-                         ->with('success', 'Course has been updated successfully');    
+            ->with('success', 'Course has been updated successfully');
     }
 
     /**
@@ -89,17 +89,17 @@ class CourseController extends Controller
     {
         if (Gate::denies('delete', $course)) {
             return redirect()->route('courses.index')
-                             ->with('error', 'You are not authorized to delete this course.');
-        } 
+                ->with('error', 'You are not authorized to delete this course.');
+        }
 
         try {
             $this->courseService->deleteCourse($course);
 
             return redirect()->route('courses.index')
-                             ->with('success', 'Course has been deleted successfully');
+                ->with('success', 'Course has been deleted successfully');
         } catch (\Exception $e) {
             return redirect()->route('courses.index')
-                             ->with('error', $e->getMessage());
-        }     
+                ->with('error', $e->getMessage());
+        }
     }
 }

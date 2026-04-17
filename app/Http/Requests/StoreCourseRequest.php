@@ -13,8 +13,8 @@ class StoreCourseRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        
-        //Only admin/and teacher can add the course
+
+        // Only admin/and teacher can add the course
         return $user->isAdmin() || $user->role === 'Teacher';
     }
 
@@ -26,9 +26,9 @@ class StoreCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //validate incoming course data
+            // validate incoming course data
             'title' => 'required|string|max:255',
-            'description' => 'required|string'
+            'description' => 'required|string',
         ];
     }
 }

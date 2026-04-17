@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\User;
@@ -10,7 +11,7 @@ class UserService
     /**
      * Get All users
      */
-    public function getAllUsers($per_page = 15): LengthAwarePaginator 
+    public function getAllUsers($per_page = 15): LengthAwarePaginator
     {
         return User::paginate($per_page);
     }
@@ -20,10 +21,10 @@ class UserService
      */
     public function storeUser(array $validated_user): User
     {
-        //Hash the password before saving!
+        // Hash the password before saving!
         $validated_user['password'] = Hash::make($validated_user['password']);
 
-        //Deafult value
+        // Deafult value
         $validated_user['join_date'] = now();
         $validated_user['last_login'] = null;
 
@@ -37,16 +38,16 @@ class UserService
     public function updateUser(User $user, array $validated_user): User
     {
         $user->update($validated_user);
-        
+
         return $user;
     }
 
-    /** 
+    /**
      * Delete user
      */
     public function deleteUser(User $user): bool
     {
-        //Prevent deleting own account
+        // Prevent deleting own account
         if (auth()->id() === $user->id) {
             throw new \Exception('You cannot delete your own account');
         }

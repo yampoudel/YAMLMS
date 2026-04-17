@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class StoreUserRequest extends FormRequest
 {
@@ -14,7 +14,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-       return true;
+        return true;
     }
 
     /**
@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //validate incoming user data
+            // validate incoming user data
             'role' => ['required', Rule::in(['Admin', 'Learner', 'Teacher'])],
             'login' => 'required|string|unique:lms_users,login|max:255',
             'first_name' => 'required|string|max:255',
@@ -39,7 +39,7 @@ class StoreUserRequest extends FormRequest
             'country' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'postcode' => 'required|string|digits:4',
-            'suburb'   => 'required|string|max:255',
+            'suburb' => 'required|string|max:255',
         ];
     }
 }

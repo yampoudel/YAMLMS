@@ -23,9 +23,9 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //Validate incoming data for update
+            // Validate incoming data for update
             'title' => 'required|string|max:255',
-            'description' => 'required|string'
+            'description' => 'required|string',
         ];
     }
 }

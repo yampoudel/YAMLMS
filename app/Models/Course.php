@@ -2,40 +2,41 @@
 
 namespace App\Models;
 
+use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    /** @use HasFactory<\Database\Factories\CourseFactory> */
+    /** @use HasFactory<CourseFactory> */
     use HasFactory;
 
     protected $table = 'lms_courses';
-  
-    //Mass assignment of fields
-    protected  $fillable = [
-        'title', 
-        'description', 
-        'created_by'
+
+    // Mass assignment of fields
+    protected $fillable = [
+        'title',
+        'description',
+        'created_by',
     ];
 
-    //Get the enrolments for this course
+    // Get the enrolments for this course
     public function enrolments(): HasMany
     {
         return $this->HasMany(Enrolment::class);
     }
 
-    //Get the list of users belongs to this course
+    // Get the list of users belongs to this course
     public function users(): BelongsToMany
     {
         return $this->BelongsToMany(
-            User::class, 
+            User::class,
             'lms_enrolments',
-            'id', 
+            'id',
             'course_id',
-            'user_id' 
+            'user_id'
         );
     }
 }

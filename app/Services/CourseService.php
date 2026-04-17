@@ -14,16 +14,18 @@ class CourseService
     {
         $user = auth()->user();
 
-        //Only admin can see all the courses
+        // Only admin can see all the courses
         if (auth()->user()->isAdmin()) {
             return Course::paginate($per_page);
         }
 
-        //If teacher will see the courses which are created by themselves
+        // If teacher will see the courses which are created by themselves
         if (auth()->user()->role === 'Teacher') {
             return Course::where('created_by', $user->id)->paginate($per_page);
         }
-        
+
+        // Default: Return an empty paginator or throw an exception
+        return Course::where('id', 0)->paginate($per_page);
     }
 
     /**
@@ -31,10 +33,10 @@ class CourseService
      */
     public function storeCourse(array $validated_course): Course
     {
-        //Adding course created Id
+        // Adding course created Id
         $validated_course['created_by'] = auth()->id();
 
-        //Add course to the table
+        // Add course to the table
         return Course::create($validated_course);
     }
 
@@ -43,9 +45,9 @@ class CourseService
      */
     public function updateCourse(Course $course, array $validated_course): Course
     {
-       $course->update($validated_course);
+        $course->update($validated_course);
 
-       return $course;
+        return $course;
     }
 
     /**
