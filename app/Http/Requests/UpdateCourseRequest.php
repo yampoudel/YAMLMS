@@ -24,8 +24,8 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             // Validate incoming data for update
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
         ];
     }
 }
