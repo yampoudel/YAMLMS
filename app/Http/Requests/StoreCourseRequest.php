@@ -27,8 +27,8 @@ class StoreCourseRequest extends FormRequest
     {
         return [
             // validate incoming course data
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
         ];
     }
 }
