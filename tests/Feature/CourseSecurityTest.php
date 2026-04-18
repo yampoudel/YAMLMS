@@ -20,4 +20,3 @@ it('prevents a teacher from editing another teacher course', function () {
     $response->assertSessionHas('error', 'You are not authorized to edit this course.');
 
 });
-
