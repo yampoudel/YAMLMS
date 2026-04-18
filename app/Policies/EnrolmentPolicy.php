@@ -26,8 +26,10 @@ class EnrolmentPolicy
 
         // Teacher specific rules
         if ($authenticated_user->role === 'Teacher') {
-            // Teachers can enrol anyone EXCEPT Admins and themselves
-            return $targeted_user->role !== 'Admin' && $authenticated_user->id !== $targeted_user->id;
+
+            // Teachers can enrol to only learners(no admins, no other teachers or themselves)
+            return ! in_array($targeted_user->role, ['Admin', 'Teacher'])
+                && $authenticated_user->id !== $targeted_user->id;
         }
 
         return false;
