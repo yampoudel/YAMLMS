@@ -12,7 +12,7 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    // Dependency Injection from UserService via consturctor
+    // Dependency injection from UserService via constructor
     public function __construct(protected UserService $userService) {}
 
     /**
@@ -30,9 +30,11 @@ class UserController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-        // Adding Page Information
-        $page_info = [];
-        $page_info['title'] = 'ADD A NEW USER';
+        // Adding page information for create page
+        $page_info = [
+            'title' => 'Add New User',
+            'back_button' => 'Back To Users',
+        ];
 
         if (Gate::denies('create', User::class)) {
             return redirect()->route('users.index')
@@ -63,12 +65,18 @@ class UserController extends Controller
      */
     public function edit(User $user): View|RedirectResponse
     {
+        // Adding Page Information for edit page
+        $page_info = [
+            'title' => 'Edit User',
+            'back_button' => 'Back To Users',
+        ];
+
         if (Gate::denies('update', $user)) {
             return redirect()->route('users.index')
                 ->with('error', 'You are not authorized to update this user.');
         }
 
-        return view('admin.user.edit', compact('user'));
+        return view('admin.user.edit', compact(['user', 'page_info']));
     }
 
     /**

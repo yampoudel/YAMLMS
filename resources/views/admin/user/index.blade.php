@@ -1,21 +1,31 @@
 <x-app-layout>
-
     {{-- Header Section --}}
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">
-                Users
-            </h1>
+        <div class="flex items-center justify-between w-full">
+            <!-- SECTION 1: Extreme Left (The Button) -->
+            <div class="flex-1 flex justify-start gap-4">
+                @can('create', App\Models\User::class)
+                    <a href="{{ route('users.create') }}"
+                        class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
+                        <span class="mr-2">+</span> Add User
+                    </a>
+                @endcan
 
-            @can('create', App\Models\User::class)
-                <a href="{{ route('users.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    + Add User
+                <a href="{{ route('enrolments.index') }}"
+                    class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
+                    Enrolment List
                 </a>
-            @endcan
+            </div>
 
-            <a href="{{ route('enrolments.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Enrolment List
-            </a>
+            <!-- SECTION 2: Center (The Title) -->
+            <div class="flex-1 text-center">
+                <h1 class="text-2xl font-bold text-gray-800 whitespace-nowrap">
+                    Users
+                </h1>
+            </div>
+
+            <!-- SECTION 3: Right Spacer (Keeps the title perfectly in the middle) -->
+            <div class="flex-1"></div>
         </div>
     </x-slot>
 
@@ -31,7 +41,6 @@
                 @endif
 
                 <div class="bg-white shadow-sm sm:rounded-lg p-4 overflow-x-auto">
-
                     <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-100">
                             <tr>

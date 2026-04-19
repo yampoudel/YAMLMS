@@ -1,15 +1,25 @@
 <x-app-layout>
-
     {{-- Header Section --}}
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">
-                User Enrolments
-            </h1>
+        <div class="flex items-center justify-between w-full">
+            <!-- SECTION 1: Extreme Left -->
+            <div class="flex-1 flex justify-start gap-4">
+                <a href="{{ route('users.index') }}"
+                    class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
+                    Users List
+                </a>
+            </div>
 
-            <a href="{{ route('users.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Users List
-            </a>
+            <!-- SECTION 2: Center (The Title) -->
+            <div class="flex-1 text-center">
+                <h1 class="text-2xl font-bold text-gray-800 whitespace-nowrap">
+                    User Enrolments
+                </h1>
+            </div>
+
+            <!-- SECTION 3: Right Spacer (Keeps the title perfectly in the middle) -->
+            <div class="flex-1">
+            </div>
         </div>
     </x-slot>
 

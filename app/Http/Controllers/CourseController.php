@@ -32,8 +32,11 @@ class CourseController extends Controller
      */
     public function create(): View
     {
-        $page_info = [];
-        $page_info['title'] = 'Add a new course';
+        // Adding info for create page
+        $page_info = [
+            'title' => 'Add New Course',
+            'back_button' => 'Back To Courses',
+        ];
 
         return view('admin.course.create', compact('page_info'));
     }
@@ -55,6 +58,12 @@ class CourseController extends Controller
      */
     public function edit(Course $course): View|RedirectResponse
     {
+        // Adding info for edit page
+        $page_info = [
+            'title' => 'Edit Course',
+            'back_button' => 'Back To Courses',
+        ];
+
         // Uses the 'update' rule in CoursePolicy
         if (Gate::denies('update', $course)) {
             return redirect()->route('courses.index')
@@ -62,7 +71,7 @@ class CourseController extends Controller
         }
 
         // return edit page
-        return view('admin.course.edit', compact('course'));
+        return view('admin.course.edit', compact(['course', 'page_info']));
     }
 
     /**

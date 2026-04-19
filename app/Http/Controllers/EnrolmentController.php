@@ -37,14 +37,16 @@ class EnrolmentController extends Controller
      */
     public function create(User $user): View|RedirectResponse
     {
+        // Adding page information for create page
+        $page_info = [
+            'title' => 'Enrol User',
+            'back_button' => 'Back To Users',
+        ];
+
         if (Gate::denies('create', [Enrolment::class, $user])) {
             return redirect()->route('users.index')
                 ->with('error', 'You are not authorized to enrol this user.');
         }
-
-        // Display new enrolment adding page
-        $page_info = [];
-        $page_info['title'] = 'Enrol Course';
 
         // Role based course filtering
         $courses = auth()->user()->isAdmin()
