@@ -1,15 +1,33 @@
 <x-app-layout>
     {{-- Header Section --}}
     <x-slot name="header">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800 text-center">
-                EDIT AN USER
-            </h1>
+        <div class="flex items-center justify-between w-full">
+            <!-- SECTION 1: Extreme Left (The Button) -->
+            <div class="flex-1 flex justify-start">
+                <a href="{{ route('users.index') }}"
+                    class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition duration-200">
+                    <!-- SVG Icon makes the "Back" action clear -->
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    {{ $page_info['back_button'] }}
+                </a>
+            </div>
+
+            <!-- SECTION 2: Center (The Title) -->
+            <div class="flex-1 text-center">
+                <h1 class="text-2xl font-bold text-gray-800 whitespace-nowrap">
+                    {{ $page_info['title'] }}
+                </h1>
+            </div>
+
+            <!-- SECTION 3: Right Spacer (Keeps the title perfectly in the middle) -->
+            <div class="flex-1"></div>
         </div>
     </x-slot>
 
     {{-- Main Content --}}
-
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -154,7 +172,8 @@
                         <!-- City -->
                         <div>
                             <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                            <input type="text" name="city" id="city" value="{{ old('login', $user->city) }}"
+                            <input type="text" name="city" id="city"
+                                value="{{ old('login', $user->city) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
                             @error('city')
                                 <span class="text-red-700">{{ $message }}</span>
@@ -189,7 +208,7 @@
                     <!-- Submit -->
                     <div class="mt-8 text-center">
                         <button type="submit"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                            class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
                             Update User
                         </button>
                     </div>
