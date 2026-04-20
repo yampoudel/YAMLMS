@@ -10,7 +10,7 @@ class CourseService
     /**
      * Get all courses based on user
      */
-    public function getAllCourses(int $per_page): LengthAwarePaginator
+    public function getCourseList(int $per_page): LengthAwarePaginator
     {
         $user = auth()->user();
 

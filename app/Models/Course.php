@@ -39,4 +39,11 @@ class Course extends Model
             'user_id'
         );
     }
+
+    // Get lessons for this course
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class)
+            ->order_by('position', 'asc');
+    }
 }
