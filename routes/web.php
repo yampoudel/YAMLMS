@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrolmentController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
     Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])->name('enrolments.create');
     Route::post('enrolments/store/{user}', [EnrolmentController::class, 'store'])->name('enrolments.store');
+
+    // Lessons Module
+    Route::resource('lessons', LessonController::class);
+
 });
 
 // ADMIN ONLY: Protected by 'admin' middleware

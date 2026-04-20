@@ -11,7 +11,7 @@ class UserService
     /**
      * Get All users
      */
-    public function getAllUsers($per_page = 15): LengthAwarePaginator
+    public function getUserList($per_page = 15): LengthAwarePaginator
     {
         return User::paginate($per_page);
     }
