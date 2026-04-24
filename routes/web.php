@@ -35,6 +35,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::resource('courses', CourseController::class);
 
+    // The {course} in the URL is what provides the object
+    // Route::get('courses/{course}/lessons/create', [LessonController::class, 'create'])->name('lessons.create');
+    // Route::post('courses/{course}/lessons', [LessonController::class, 'store'])->name('lessons.store');
+
     // SHARED: Enrolment Module (Custom parameters)
     Route::resource('enrolments', EnrolmentController::class)->except(['create', 'store']);
     Route::get('enrolments/create/{user}', [EnrolmentController::class, 'create'])->name('enrolments.create');
