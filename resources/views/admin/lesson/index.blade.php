@@ -13,7 +13,7 @@
             <!-- SECTION 2: Center (The Title) -->
             <div class="flex-1 text-center">
                 <h1 class="text-2xl font-bold text-gray-800 whitespace-nowrap">
-                    lessons
+                    Lessons
                 </h1>
             </div>
 

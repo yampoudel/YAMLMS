@@ -48,15 +48,16 @@
 
                         <!-- Course Description -->
                         <div>
-                            <label for='description' class="block text-sm font-medium text-gray-700 mb-1"> Course
-                                Description
-                                </lablel>
-                                <textarea name = "description" id = "description" maxlength="500" value="{{ old('description') }}"
-                                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200"></textarea>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                                Course Description
+                            </label>
 
-                                @error('description')
-                                    <span class="text-red-700">{{ $message }}</span>
-                                @enderror
+                            <textarea name="description" id="description" maxlength="500"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description') }}</textarea>
+
+                            @error('description')
+                                <span class="text-red-700">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

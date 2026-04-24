@@ -25,4 +25,16 @@ class LessonService
             ->orderBy('position')
             ->paginate($per_page);
     }
+
+    /**
+     * Create lession
+     */
+    public function storeLesson(array $validated_lessons)
+    {
+        // Get id who creates lesson
+        $validated_lessons['created_by'] = auth()->id();
+
+        // cteate Lesson
+        Lesson::create($validated_lessons);
+    }
 }
