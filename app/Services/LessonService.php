@@ -27,14 +27,56 @@ class LessonService
     }
 
     /**
-     * Create lession
+     * Create lesson
      */
-    public function storeLesson(array $validated_lessons)
+    public function storeLesson(array $validated_lesson): Lesson
     {
+        // Transform the 'content' string into your JSON block format
+        $prepared_data = $this->handleLessonContent($validated_lesson);
+
         // Get id who creates lesson
-        $validated_lessons['created_by'] = auth()->id();
+        $prepared_data['created_by'] = auth()->id();
 
         // cteate Lesson
-        Lesson::create($validated_lessons);
+        return Lesson::create($prepared_data);
+    }
+
+    /**
+     * Update Lesson
+     */
+    public function updateLesson(Lesson $lesson, array $validated_lesson): Lesson
+    {
+        // Transform the 'content' string into your JSON block format
+        $prepared_data = $this->handleLessonContent($validated_lesson);
+
+        // Update lesson
+        $lesson->update($prepared_data);
+
+        return $lesson;
+    }
+
+    /**
+     * Delete lesson
+     */
+    public function delete(Lesson $lesson): bool
+    {
+        // Delete lesson
+        return $lesson->delete();
+    }
+
+    /**
+     * Return array of data for content
+     */
+    public function handleLessonContent(array $data): array
+    {
+        // Wrap the raw string from form to json block format
+        $data['content'] = [
+            [
+                'type' => $data['type'] === 'Default' ? 'text' : strtolower($data['type']),
+                'value' => $data['content'], // String from ck editor
+            ],
+        ];
+
+        return $data;
     }
 }

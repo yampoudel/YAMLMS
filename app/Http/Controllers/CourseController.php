@@ -58,20 +58,24 @@ class CourseController extends Controller
      */
     public function edit(Course $course): View|RedirectResponse
     {
-        // Adding info for edit page
-        $page_info = [
-            'title' => 'Edit Course',
-            'back_button' => 'Back To Courses',
-        ];
-
         // Uses the 'update' rule in CoursePolicy
         if (Gate::denies('update', $course)) {
             return redirect()->route('courses.index')
                 ->with('error', 'You are not authorized to edit this course.');
         }
 
+        // Adding info for edit page
+        $page_info = [
+            'title' => 'Edit Course',
+            'back_button' => 'Back To Courses',
+            'lesson_link' => '+ Add Lesson',
+        ];
+
+        // Eager load lessons and their creators to keep it fast
+        $lessons = $course->lessons;
+
         // return edit page
-        return view('admin.course.edit', compact(['course', 'page_info']));
+        return view('admin.course.edit', compact('course', 'lessons', 'page_info'));
     }
 
     /**

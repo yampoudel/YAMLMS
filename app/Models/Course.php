@@ -44,6 +44,6 @@ class Course extends Model
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class)
-            ->order_by('position', 'asc');
+            ->orderBy('position', 'asc');
     }
 }
