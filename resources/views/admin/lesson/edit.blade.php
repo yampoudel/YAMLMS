@@ -37,15 +37,17 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('lessons.store') }}" method="POST">
+                <form action="{{ route('lessons.update', $lesson) }}" method="POST">
                     @csrf
+                    @method('PUT')
 
                     {{-- Metadata Grid --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Title -->
                         <div class="col-span-1">
                             <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                            <input type="text" name="title" id="title" value="{{ old('title') }}"
+                            <input type="text" name="title" id="title"
+                                value="{{ old('title', $lesson->title) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
                             @error('title')
                                 <span class="text-red-700 text-sm">{{ $message }}</span>
@@ -61,11 +63,7 @@
                                 <option value="">-- Select a Course --</option>
                                 @foreach ($courses as $course_option)
                                     <option value="{{ $course_option->id }}"
-                                        {{ old('course_id') == $course_option->id ||
-                                        (isset($course) && $course->id == $course_option->id) ||
-                                        (isset($selected_course_id) && $selected_course_id == $course_option->id)
-                                            ? 'selected'
-                                            : '' }}>
+                                        {{ old('course_id', $course_option->id) === $lesson->course_id ? 'selected' : '' }}>
                                         {{ $course_option->title }}
                                     </option>
                                 @endforeach
@@ -80,9 +78,11 @@
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                             <select name="status" id="status"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                                <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>Active
+                                <option value="Active"
+                                    {{ old('status', $lesson->status) === 'Active' ? 'selected' : '' }}>Active
                                 </option>
-                                <option value="Disabled" {{ old('status') == 'Disabled' ? 'selected' : '' }}>Disabled
+                                <option value="Disabled"
+                                    {{ old('status', $lesson->status) === 'Disabled' ? 'selected' : '' }}>Disabled
                                 </option>
                             </select>
                         </div>
@@ -92,10 +92,14 @@
                             <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                             <select name="type" id="type"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                                <option value="Default" {{ old('type') == 'Default' ? 'selected' : '' }}>Default
+                                <option value="Default"
+                                    {{ old('type', $lesson->type) === 'Default' ? 'selected' : '' }}>
+                                    Default
                                 </option>
-                                <option value="Survey" {{ old('type') == 'Survey' ? 'selected' : '' }}>Survey</option>
-                                <option value="Quiz" {{ old('type') == 'Quiz' ? 'selected' : '' }}>Quiz</option>
+                                <option value="Survey" {{ old('type', $lesson->type) === 'Survey' ? 'selected' : '' }}>
+                                    Survey</option>
+                                <option value="Quiz" {{ old('type', $lesson->type) === 'Quiz' ? 'selected' : '' }}>
+                                    Quiz</option>
                             </select>
                         </div>
 
@@ -104,7 +108,7 @@
                             <label for="description"
                                 class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea name="description" id="description" rows="3"
-                                class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description') }}</textarea>
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description', $lesson->description) }}</textarea>
                         </div>
                     </div>
 
@@ -112,7 +116,7 @@
                     <div class="mt-8 pt-6 border-t border-gray-100">
                         <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Lesson
                             Content</label>
-                        <textarea name="content" id="content" class="w-full">{{ old('content') }}</textarea>
+                        <textarea name="content" id="content" class="w-full">{{ old('content', $lesson->content[0]['value'] ?? '') }}</textarea>
                         @error('content')
                             <span class="text-red-700 text-sm">{{ $message }}</span>
                         @enderror
@@ -122,7 +126,7 @@
                     <div class="mt-8 text-center">
                         <button type="submit"
                             class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
-                            Add Lesson
+                            Edit Lesson
                         </button>
                     </div>
                 </form>

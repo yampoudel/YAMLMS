@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLessonRequest;
+use App\Http\Requests\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\LessonService;
@@ -21,8 +22,13 @@ class LessonController extends Controller
     /**
      * Display a listing of the lesson.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
+        if (Gate::denies('viewAny', Lesson::class)) {
+            return redirect()->route('lessons.index')
+                ->with('error', 'You are not authorize to view lessons');
+        }
+
         // Get list of lessons
         $lessons = $this->lessonService->getLessonList(15);
 
@@ -30,9 +36,9 @@ class LessonController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new lesson.
      */
-    public function create(): View|RedirectResponse
+    public function create(Request $request): View|RedirectResponse
     {
         // Check policy
         if (Gate::denies('create', Lesson::class)) {
@@ -40,7 +46,10 @@ class LessonController extends Controller
                 ->with('error', 'You are not authorized to create lesson.');
         }
 
-        // Adding page information
+        // Get the course_id from url if selected
+        $selected_course_id = $request->query('course_id');
+
+        // Adding page information for create
         $page_info = [
             'title' => 'Add Lesson',
             'back_button' => 'Back To Lessons',
@@ -52,11 +61,11 @@ class LessonController extends Controller
         $courses = $user->isAdmin() ? Course::all() :
             Course::where('created_by', $user->id)->get();
 
-        return view('admin.lesson.create', compact('courses', 'page_info'));
+        return view('admin.lesson.create', compact('courses', 'page_info', 'selected_cou'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created lesson in storage.
      */
     public function store(StoreLessonRequest $request): RedirectResponse
     {
@@ -74,27 +83,43 @@ class LessonController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the specified lesson.
      */
-    public function show(Lesson $lesson)
+    public function edit(Lesson $lesson): View
     {
-        //
-    }
+        if (Gate::denies('update', $lesson)) {
+            return redirect()->route('lessons.index')
+                ->with('error', 'You are not authorized to edit this lesson.');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Lesson $lesson)
-    {
-        //
+        // Get page information for edit page
+        $page_info = [
+            'title' => 'Edit Lesson',
+            'back_button' => 'Go To Lessons',
+        ];
+
+        // Get the courses assigned to this users
+        $user = auth()->user();
+        $courses = $user->isAdmin() ? Course::all() :
+            Course::where('created_by', $user->id)->get();
+
+        return view('admin.lesson.edit', compact('lesson', 'courses', 'page_info'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lesson $lesson)
+    public function update(UpdateLessonRequest $request, Lesson $lesson): RedirectResponse
     {
-        //
+        if (Gate::denies('update', $lesson)) {
+            return redirect()->route('lessons.index')
+                ->with('error', 'You are not authorized to edit this lesson.');
+        }
+
+        $this->lessonService->updateLesson($lesson, $request->validated());
+
+        return redirect()->route('lessons.index')
+            ->with('success', 'Lessson has been updated successfully');
     }
 
     /**
@@ -102,6 +127,14 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        //
+        if (Gate::denies('delete', $lesson)) {
+            return redirect()->route('lessons.index')
+                ->with('error', 'You are not authorized to delete this lesson.');
+        }
+
+        $this->lessonService->delete($lesson);
+
+        return redirect()->route('lessons.index')
+            ->with('success', 'Lessson has been deleted successfully');
     }
 }

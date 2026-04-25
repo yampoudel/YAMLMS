@@ -23,7 +23,13 @@
             </div>
 
             <!-- SECTION 3: Right Spacer (Keeps the title perfectly in the middle) -->
-            <div class="flex-1"></div>
+            <div class="flex-1">
+                {{-- Passes the $course_id to the Lesson Creator --}}
+                <a href="{{ route('lessons.create', ['course_id' => $course->id]) }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition ease-in-out duration-150">
+                    {{ $page_info['lesson_link'] }}
+                </a>
+            </div>
         </div>
     </x-slot>
 
