@@ -21,10 +21,8 @@ class EnrolmentController extends Controller
      */
     public function index(): View|RedirectResponse
     {
-        if (Gate::denies('viewAny', Enrolment::class)) {
-            return redirect()->route('users.index')
-                ->with('error', 'You are not authorized to view enrolments.');
-        }
+        // Check policy
+        $this->authorize('viewAny', Enrolment::class);
 
         // Get all enrolments
         $enrolments = $this->enrolmentService->getEnrolmentList(15);
@@ -37,16 +35,17 @@ class EnrolmentController extends Controller
      */
     public function create(User $user): View|RedirectResponse
     {
+        // Check policy
+        if (Gate::denies('create', [Enrolment::class, $user])) {
+            return redirect()->route('users.index')
+                ->with('error', 'You are not authorized to enrol this user.');
+        }
+
         // Adding page information for create page
         $page_info = [
             'title' => 'Enrol User',
             'back_button' => 'Back To Users',
         ];
-
-        if (Gate::denies('create', [Enrolment::class, $user])) {
-            return redirect()->route('users.index')
-                ->with('error', 'You are not authorized to enrol this user.');
-        }
 
         // Role based course filtering
         $courses = auth()->user()->isAdmin()
@@ -61,6 +60,7 @@ class EnrolmentController extends Controller
      */
     public function store(StoreEnrolmentRequest $request, User $user): RedirectResponse
     {
+        // Check policy
         if (Gate::denies('create', [Enrolment::class, $user])) {
             return redirect()->route('users.index')
                 ->with('error', 'You are not authorized to enrol this user.');
@@ -78,6 +78,7 @@ class EnrolmentController extends Controller
      */
     public function destroy(Enrolment $enrolment): RedirectResponse
     {
+        // Check policy
         if (Gate::denies('delete', $enrolment)) {
             return redirect()->route('enrolments.index')
                 ->with('error', 'You are not authorized to delete this enrolment.');

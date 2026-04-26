@@ -22,6 +22,10 @@ class CourseController extends Controller
      */
     public function index(): View
     {
+        // Check policy
+        $this->authorize('viewAny', Course::class);
+
+        // Get list of courses
         $courses = $this->courseService->getCourseList(15);
 
         return view('admin.course.index', compact('courses'));
@@ -30,8 +34,14 @@ class CourseController extends Controller
     /**
      * Show the form for creating a new course
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        // Check policy
+        if (Gate::denies('create', Course::class)) {
+            return redirect()->route('courses.index')
+                ->with('error', 'You are not authorize to create a course');
+        }
+
         // Adding info for create page
         $page_info = [
             'title' => 'Add New Course',
@@ -46,6 +56,12 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request): RedirectResponse
     {
+        // Check policy
+        if (Gate::denies('create', Course::class)) {
+            return redirect()->route('courses.index')
+                ->with('error', 'You are not authorize to create a course');
+        }
+
         // Course data is already validated and store course here
         $this->courseService->storeCourse($request->validated());
 
@@ -83,6 +99,7 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
+        // Check policy
         if (Gate::denies('update', $course)) {
             return redirect()->route('courses.index')
                 ->with('error', 'You are not authorized to edit this course.');
@@ -100,6 +117,7 @@ class CourseController extends Controller
      */
     public function destroy(Course $course): RedirectResponse
     {
+        // Check policy
         if (Gate::denies('delete', $course)) {
             return redirect()->route('courses.index')
                 ->with('error', 'You are not authorized to delete this course.');

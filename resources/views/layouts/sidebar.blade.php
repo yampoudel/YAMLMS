@@ -15,56 +15,57 @@
         </div>
 
         <nav class="py-4 px-3 space-y-2">
-            <!-- User Management -->
-            <a href="{{ route('users.index') }}"
-                class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
-                    {{ request()->routeIs('users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
-                    xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                {{ __('USER MANAGEMENT') }}
-            </a>
+             @if (auth()->user()->isAdmin() || auth()->user()->role === 'Teacher')
+                <!-- User Management -->
+                <a href="{{ route('users.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
+                        xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    {{ __('USER MANAGEMENT') }}
+                </a>
 
-            <!-- Course Management -->
-            <a href="{{ route('courses.index') }}"
-                class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
-                    {{ request()->routeIs('courses.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('courses.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
-                    xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path
-                        d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                </svg>
-                {{ __('COURSE MANAGEMENT') }}
-            </a>
+                <!-- Course Management -->
+                <a href="{{ route('courses.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('courses.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('courses.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
+                        xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path
+                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                    </svg>
+                    {{ __('COURSE MANAGEMENT') }}
+                </a>
 
-            <!-- Enrolments -->
-            <a href ="{{ route('enrolments.index') }}"
-                class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
-                    {{ request()->routeIs('enrolments.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('enrolments.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
-                    xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-                {{ __('ENROLMENTS') }}
-            </a>
+                <!-- Enrolments -->
+                <a href ="{{ route('enrolments.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('enrolments.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('enrolments.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
+                        xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    {{ __('ENROLMENTS') }}
+                </a>
 
-            <!-- Lessons Management -->
-            <a href ="{{ route('lessons.index') }}"
-                class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
-                    {{ request()->routeIs('lessons.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('lessons.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
-                    xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-                {{ __('LESSON MANAGEMENT') }}
-            </a>
+                <!-- Lessons Management -->
+                <a href ="{{ route('lessons.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('lessons.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('lessons.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
+                        xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {{ __('LESSON MANAGEMENT') }}
+                </a>
+             @endif
         </nav>
     </div>
 
