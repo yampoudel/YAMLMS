@@ -24,10 +24,8 @@ class LessonController extends Controller
      */
     public function index(): View|RedirectResponse
     {
-        if (Gate::denies('viewAny', Lesson::class)) {
-            return redirect()->route('lessons.index')
-                ->with('error', 'You are not authorize to view lessons');
-        }
+        // Check policy
+        $this->authorize('viewAny', Lesson::class);
 
         // Get list of lessons
         $lessons = $this->lessonService->getLessonList(15);
@@ -55,13 +53,13 @@ class LessonController extends Controller
             'back_button' => 'Back To Lessons',
         ];
 
-        // Get courses for this user
         $user = auth()->user();
 
+        // Get courses for this user
         $courses = $user->isAdmin() ? Course::all() :
             Course::where('created_by', $user->id)->get();
 
-        return view('admin.lesson.create', compact('courses', 'page_info', 'selected_cou'));
+        return view('admin.lesson.create', compact('courses', 'page_info', 'selected_course_id'));
     }
 
     /**
@@ -87,6 +85,7 @@ class LessonController extends Controller
      */
     public function edit(Lesson $lesson): View
     {
+        // Check policy
         if (Gate::denies('update', $lesson)) {
             return redirect()->route('lessons.index')
                 ->with('error', 'You are not authorized to edit this lesson.');
@@ -98,8 +97,9 @@ class LessonController extends Controller
             'back_button' => 'Go To Lessons',
         ];
 
-        // Get the courses assigned to this users
         $user = auth()->user();
+
+        // Get the courses assigned to this users
         $courses = $user->isAdmin() ? Course::all() :
             Course::where('created_by', $user->id)->get();
 
@@ -111,6 +111,7 @@ class LessonController extends Controller
      */
     public function update(UpdateLessonRequest $request, Lesson $lesson): RedirectResponse
     {
+        // Check policy
         if (Gate::denies('update', $lesson)) {
             return redirect()->route('lessons.index')
                 ->with('error', 'You are not authorized to edit this lesson.');
@@ -127,11 +128,13 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
+        // Check policy
         if (Gate::denies('delete', $lesson)) {
             return redirect()->route('lessons.index')
                 ->with('error', 'You are not authorized to delete this lesson.');
         }
 
+        // Delete lesson
         $this->lessonService->delete($lesson);
 
         return redirect()->route('lessons.index')

@@ -19,7 +19,10 @@ class UserController extends Controller
      * Display a listing of the user.
      */
     public function index(): View
-    {
+    {   // Check policy
+        $this->authorize('viewAny', User::class);
+
+        // Get all users
         $users = $this->userService->getUserList(15);
 
         return view('admin.user.index', compact('users'));
@@ -30,16 +33,17 @@ class UserController extends Controller
      */
     public function create(): View|RedirectResponse
     {
+        // Check Policy
+        if (Gate::denies('create', User::class)) {
+            return redirect()->route('users.index')
+                ->with('error', 'You are not authorized to create user.');
+        }
+
         // Adding page information for create page
         $page_info = [
             'title' => 'Add New User',
             'back_button' => 'Back To Users',
         ];
-
-        if (Gate::denies('create', User::class)) {
-            return redirect()->route('users.index')
-                ->with('error', 'You are not authorized to create user.');
-        }
 
         return view('admin.user.create', compact('page_info'));
     }
@@ -65,16 +69,17 @@ class UserController extends Controller
      */
     public function edit(User $user): View|RedirectResponse
     {
+        // Check policy
+        if (Gate::denies('update', $user)) {
+            return redirect()->route('users.index')
+                ->with('error', 'You are not authorized to update this user.');
+        }
+
         // Adding Page Information for edit page
         $page_info = [
             'title' => 'Edit User',
             'back_button' => 'Back To Users',
         ];
-
-        if (Gate::denies('update', $user)) {
-            return redirect()->route('users.index')
-                ->with('error', 'You are not authorized to update this user.');
-        }
 
         return view('admin.user.edit', compact(['user', 'page_info']));
     }

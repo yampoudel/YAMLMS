@@ -7,6 +7,14 @@ use App\Models\User;
 class UserPolicy
 {
     /**
+     * Determine whether the user can view users model
+     */
+    public function viewAny(User $authenticated_user): bool
+    {
+        return $authenticated_user->isAdmin() || $authenticated_user->role === 'Teacher';
+    }
+
+    /**
      * Determine whether the user create/store the model
      */
     public function create(User $authenticated_user)

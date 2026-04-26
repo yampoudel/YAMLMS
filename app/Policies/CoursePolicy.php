@@ -8,6 +8,23 @@ use App\Models\User;
 class CoursePolicy
 {
     /**
+     * Determine whether the user can view courses.
+     */
+    public function viewAny(User $authenticated_user): bool
+    {
+        return $authenticated_user->isAdmin() || $authenticated_user->role === 'Teacher';
+    }
+
+    /**
+     * Determine whether the user can create the model
+     */
+    public function create(User $authenticated_user): bool
+    {
+        // Only allow to admin and teacher
+        return $authenticated_user->isAdmin() || $authenticated_user === 'Teacher';
+    }
+
+    /**
      * Determine whether the user can update the model.
      */
     public function update(User $authenticated_user, Course $target_course): bool
