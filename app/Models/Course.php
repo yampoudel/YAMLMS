@@ -46,4 +46,12 @@ class Course extends Model
         return $this->hasMany(Lesson::class)
             ->orderBy('position', 'asc');
     }
+
+    /**
+     * Get the teacher/admin who created the course.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
