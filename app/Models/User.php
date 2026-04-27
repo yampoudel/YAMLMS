@@ -88,4 +88,16 @@ class User extends Authenticatable
     {
         return $this->role === 'Admin';
     }
+
+    // Check teacher user
+    public function isTeacher(): bool
+    {
+        return $this->role === 'Teacher';
+    }
+
+    // Check learner user
+    public function isLearner(): bool
+    {
+        return $this->role === 'Learner';
+    }
 }
