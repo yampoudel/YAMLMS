@@ -100,4 +100,20 @@ class User extends Authenticatable
     {
         return $this->role === 'Learner';
     }
+
+    /**
+     * Return course progress for the user
+     */
+    public function courseProgress(): HasMany
+    {
+        return $this->hasMany(CourseCompleted::class, 'user_id');
+    }
+
+    /**
+     * Return list of completed lessons for the user
+     */
+    public function completedLessons(): HasMany
+    {
+        return $this->hasMany(LessonCompleted::class, 'user_id');
+    }
 }

@@ -15,7 +15,7 @@
         </div>
 
         <nav class="py-4 px-3 space-y-2">
-             @if (auth()->user()->isAdmin() || auth()->user()->role === 'Teacher')
+             @if (auth()->user()->isAdmin() || auth()->user()->isTeacher())
                 <!-- User Management -->
                 <a href="{{ route('users.index') }}"
                     class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
@@ -64,6 +64,25 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     {{ __('LESSON MANAGEMENT') }}
+                </a>
+             @endif
+
+             @if (auth()->user()->isLearner())
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+    
+                    <!-- Updated Graduation Cap SVG -->
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}"
+                        xmlns="http://w3.org" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke-width="1.5" 
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147L12 15l7.74-4.853a1 1 0 000-1.707L12 3.586 4.26 8.44a1 1 0 000 1.707z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v6M12 21a2.121 2.121 0 01-3-3m3 3a2.121 2.121 0 003-3m-6 0h6" />
+                    </svg>
+                    {{ __('MY LEARNING') }}
                 </a>
              @endif
         </nav>
