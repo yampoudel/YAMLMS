@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\LessonService;
+use App\Services\ProgressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -15,9 +16,9 @@ use Illuminate\View\View;
 class LessonController extends Controller
 {
     /**
-     * Inject Lesson Service
+     * Inject Lessonservice and ProgressService
      */
-    public function __construct(protected LessonService $lessonService) {}
+    public function __construct(protected LessonService $lessonService, protected ProgressService $progressService) {}
 
     /**
      * Display a listing of the lesson.
@@ -126,7 +127,7 @@ class LessonController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Lesson $lesson)
+    public function destroy(Lesson $lesson): RedirectResponse
     {
         // Check policy
         if (Gate::denies('delete', $lesson)) {
@@ -139,5 +140,62 @@ class LessonController extends Controller
 
         return redirect()->route('lessons.index')
             ->with('success', 'Lessson has been deleted successfully');
+    }
+
+    /**
+     * Show course player
+     *
+     * @param  Lesson  $lessons
+     */
+    public function play(Course $course, ?Lesson $lesson = null): View
+    {
+        $user = auth()->user();
+
+        // This forces a clean, fresh query to the lms_lessons_completed table
+        $user->load('completedLessons');
+
+        // If no specific lesson requested get first by position
+        $current_lesson = $lesson ?? $course->lessons()->orderBy('position', 'asc')->first();
+
+        // Get list of lessons for sidebars
+        $lessons = $course->lessons()->orderBy('position', 'asc')->get();
+
+        return view('learner.course-player', compact('course', 'current_lesson', 'lessons'));
+    }
+
+    /**
+     * Initiate course progress and redirect to first lesson
+     */
+    public function start(Course $course): RedirectResponse
+    {
+        $this->progressService->startCourse(auth()->user(), $course);
+
+        // Redirect to play routes
+        return redirect()->route('lessons.play', $course);
+    }
+
+    /**
+     * Lesson completion
+     */
+    public function complete(Course $course, Lesson $lesson): RedirectResponse
+    {
+        // Mark current lesson as complete
+        $this->progressService->completeLesson(auth()->user(), $course, $lesson);
+
+        // Find the next lesson by position
+        $next_lesson = $course->lessons()
+            ->where('position', '>', $lesson->position)
+            ->orderBy('position', 'asc')
+            ->first();
+
+        // Redirect to next lesson if it exists
+        if ($next_lesson) {
+            return redirect()->route('lessons.play', [$course, $next_lesson])
+                ->with('success', 'Nice job! On to the next lesson.');
+        }
+
+        // If no next lesson, course is finished
+        return redirect()->route('dashboard')
+            ->with('success', 'Congratulations! Course has been completed: '.$course->title);
     }
 }

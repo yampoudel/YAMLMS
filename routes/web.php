@@ -43,6 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Lessons Module
     Route::resource('lessons', LessonController::class);
 
+    // Lesson progress module
+    Route::get('courses/{course}/start', [LessonController::class, 'start'])->name('lessons.start');
+    Route::get('learn/{course}/{lesson?}', [LessonController::class, 'play'])->name('lessons.play');
+    Route::post('learn/{course}/lesson/{lesson}/complete', [LessonController::class, 'complete'])->name('lessons.complete');
 });
 
 // ADMIN ONLY: Protected by 'admin' middleware

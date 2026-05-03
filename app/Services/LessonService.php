@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -9,6 +10,8 @@ class LessonService
 {
     /**
      * Get all the lessons
+     *
+     * @param  int  $per_page
      */
     public function getLessonList($per_page = 15): LengthAwarePaginator
     {
@@ -33,6 +36,10 @@ class LessonService
     {
         // Transform the 'content' string into your JSON block format
         $prepared_data = $this->handleLessonContent($validated_lesson);
+
+        // Find the highest position in this course and add
+        $course = Course::findOrFail($prepared_data['course_id']);
+        $prepared_data['position'] = $course->lessons->max('position') + 1;
 
         // Get id who creates lesson
         $prepared_data['created_by'] = auth()->id();
