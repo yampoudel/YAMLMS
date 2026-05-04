@@ -6,10 +6,13 @@ use App\Http\Controllers\EnrolmentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\Course;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $courses = Course::latest()->take(6)->get();
+
+    return view('welcome', compact('courses'));
 });
 
 Route::get('/dashboard', function () {
@@ -53,5 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('users', UserController::class)->except(['index']);
 });
+
+// Send Course to the frontend to view and purchase
 
 require __DIR__.'/auth.php';
