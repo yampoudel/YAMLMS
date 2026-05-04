@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $courses = Course::latest()->take(6)->get();
 
+    // Send Course to the frontend to view and purchase
     return view('welcome', compact('courses'));
 });
 
@@ -56,7 +57,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('users', UserController::class)->except(['index']);
 });
-
-// Send Course to the frontend to view and purchase
 
 require __DIR__.'/auth.php';
