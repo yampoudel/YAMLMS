@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrolmentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TrainingRecordController;
 use App\Http\Controllers\UserController;
 use App\Models\Course;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +53,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('courses/{course}/start', [LessonController::class, 'start'])->name('lessons.start');
     Route::get('learn/{course}/{lesson?}', [LessonController::class, 'play'])->name('lessons.play');
     Route::post('learn/{course}/lesson/{lesson}/complete', [LessonController::class, 'complete'])->name('lessons.complete');
+
+    // Training record module
+    Route::get('trainingrecord', [TrainingRecordController::class, 'index'])->name('trainingrecord.index');
+
+    // Certificate Module
+    Route::get('/course/{course}/certificate', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
 // ADMIN ONLY: Protected by 'admin' middleware

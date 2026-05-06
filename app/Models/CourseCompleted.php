@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CourseCompleted extends Model
 {
@@ -18,4 +19,13 @@ class CourseCompleted extends Model
         'started_at',
         'completed_at',
     ];
+
+    protected $casts = [
+        'completed_at' => 'datetime',
+    ];
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

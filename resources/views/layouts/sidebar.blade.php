@@ -65,6 +65,16 @@
                     </svg>
                     {{ __('LESSON MANAGEMENT') }}
                 </a>
+
+                 <!-- Training Records -->
+                <a href ="{{ route('trainingrecord.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('trainingrecord.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('training.*') ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://w3.org">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    {{ __('TRAINING RECORDS') }}
+                </a>
              @endif
 
              @if (auth()->user()->isLearner())
@@ -83,6 +93,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v6M12 21a2.121 2.121 0 01-3-3m3 3a2.121 2.121 0 003-3m-6 0h6" />
                     </svg>
                     {{ __('MY LEARNING') }}
+                </a>
+
+                 <!-- Training Records -->
+                <a href ="{{ route('trainingrecord.index') }}"
+                    class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors group
+                        {{ request()->routeIs('trainingrecord.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://w3.org">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    {{ __('TRAINING RECORDS') }}
                 </a>
              @endif
         </nav>
