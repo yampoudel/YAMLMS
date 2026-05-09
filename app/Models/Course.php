@@ -54,4 +54,13 @@ class Course extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * Return course progress for the course
+     */
+    public function courseProgress(): HasMany
+    {
+        // A course has many progress record (One for each student)
+        return $this->hasMany(CourseCompleted::class, 'course_id');
+    }
 }
