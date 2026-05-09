@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CourseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// --- 1. Public Auth Routes ---
+Route::post('/login', [AuthController::class, 'login']);
+
+// --- 2. Protected Routes ---
+Route::middleware('auth:sanctum')->group(function () {
+
+    // User Management
+    Route::get('/user', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Course Data
+    Route::get('/courses', [CourseController::class, 'index']);
+
+    // User Activity
+    Route::get('/courses/{course}', [CourseController::class, 'show']);
+    Route::get('/my-courses', [CourseController::class, 'myCourses']);
+    Route::get('/my-progress', [CourseController::class, 'progress']);
 });
