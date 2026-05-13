@@ -19,9 +19,12 @@ class UserService
     /**
      * Store user
      */
-    public function storeUser(array $validated_user): User
+    public function storeUser(array $validated_user): array
     {
-        // Hash the password before saving!
+        // Store plain password as needed later
+        $plain_password = $validated_user['password'];
+
+        // Hash the password before saving for db
         $validated_user['password'] = Hash::make($validated_user['password']);
 
         // Deafult value
@@ -29,7 +32,13 @@ class UserService
         $validated_user['last_login'] = null;
 
         // Create the user in the database
-        return User::create($validated_user);
+        $user = User::create($validated_user);
+
+        // Return for welcome email
+        return [
+            'user' => $user,
+            'password' => $plain_password,
+        ];
     }
 
     /**
