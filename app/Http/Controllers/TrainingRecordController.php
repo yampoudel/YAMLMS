@@ -33,7 +33,7 @@ class TrainingRecordController extends Controller
                 ->get();
         }
 
-        return view('trainingrecord.index', compact('records'));
+        return view('training-record.index', compact('records'));
 
         abort(403);
     }
