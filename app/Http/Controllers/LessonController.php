@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Services\EmailService;
 use App\Services\LessonService;
 use App\Services\ProgressService;
 use Illuminate\Http\RedirectResponse;
@@ -18,7 +19,11 @@ class LessonController extends Controller
     /**
      * Inject Lessonservice and ProgressService
      */
-    public function __construct(protected LessonService $lessonService, protected ProgressService $progressService) {}
+    public function __construct(
+        protected LessonService $lessonService,
+        protected ProgressService $progressService,
+        protected EmailService $emailService
+    ) {}
 
     /**
      * Display a listing of the lesson.
@@ -195,6 +200,9 @@ class LessonController extends Controller
         }
 
         // If no next lesson, course is finished
+        // Send course completed email to the learner
+        $this->emailService->sendCourseCompletedEmail(auth()->user(), $course);
+
         return redirect()->route('dashboard')
             ->with('success', 'Congratulations! Course has been completed: '.$course->title);
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Services\EmailService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -12,8 +13,8 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    // Dependency injection from UserService via constructor
-    public function __construct(protected UserService $userService) {}
+    // Dependency injection from UserService,EmailService via constructor
+    public function __construct(protected UserService $userService, protected EmailService $emailService) {}
 
     /**
      * Display a listing of the user.
@@ -58,7 +59,11 @@ class UserController extends Controller
                 ->with('error', 'You are not authorized to create user.');
         }
 
-        $this->userService->storeUser($request->validated());
+        // Capture result 'user' and plain password
+        $result = $this->userService->storeUser($request->validated());
+
+        // Send Email using plain password
+        $this->emailService->sendWelcomeEmail($result['user'], $result['password']);
 
         // Redirect with a success message
         return redirect()->route('users.index')->with('success', 'User created successfully.');
