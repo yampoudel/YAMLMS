@@ -21,7 +21,7 @@ class CoursePolicy
     public function create(User $authenticated_user): bool
     {
         // Only allow to admin and teacher
-        return $authenticated_user->isAdmin() || $authenticated_user === 'Teacher';
+        return $authenticated_user->isAdmin() || $authenticated_user->isTeacher();
     }
 
     /**
