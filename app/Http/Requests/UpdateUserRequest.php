@@ -41,6 +41,7 @@ class UpdateUserRequest extends FormRequest
             'city' => ['required', 'string', 'max:255'],
             'postcode' => ['required', 'string', 'digits:4'],
             'suburb' => ['required', 'string', 'max:255'],
+            'image_path' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'], // Max 2MB of file
         ];
     }
 }

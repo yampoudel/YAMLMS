@@ -203,6 +203,27 @@
                             @enderror
                         </div>
 
+                        <!-- Profile Image -->
+                        <div>
+                            <label for="user_image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                            <div class="mb-3 flex items-center space-x-4">
+                                <div class="relative">
+                                    <img id="profile-preview-display" src="{{ $user->image_path_url }}" alt="Current Profile Image" 
+                                        class="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm">
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    <p>Current uploaded file.</p>
+                                    <p>Select a new file below to overwrite it.</p>
+                                </div>
+                            </div>
+
+                            <!-- Upload Input Field -->
+                            <input type="file" name="image_path" id="user_image_path" accept="image/*" onchange="handleImagePreview(this)"
+                                class="block w-full text-sm text-gray-500 mt-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            @error('image_path')
+                                <span class="text-red-700 text-sm mt-1 block">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Submit -->
@@ -230,6 +251,18 @@
                     }, 800); // match transition duration
                 }
             }, 3000); // wait 5 seconds before fading
+
+        function handleImagePreview(inputField) {
+            if (inputField.files && inputField.files[0]) {
+                const fileReader = new FileReader();
+                
+                fileReader.onload = function(event) {
+                    document.getElementById('profile-preview-display').src = event.target.result;
+                };
+                
+                fileReader.readAsDataURL(inputField.files[0]);
+            }
+        }
         </script>
     @endpush
 </x-app-layout>

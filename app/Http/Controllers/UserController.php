@@ -60,7 +60,7 @@ class UserController extends Controller
         }
 
         // Capture result 'user' and plain password
-        $result = $this->userService->storeUser($request->validated());
+        $result = $this->userService->storeUser($request->validated(), $request->file('image_path'));
 
         // Send Email using plain password
         $this->emailService->sendWelcomeEmail($result['user'], $result['password']);
@@ -100,7 +100,7 @@ class UserController extends Controller
         }
 
         // Update user
-        $this->userService->updateUser($user, $request->validated());
+        $this->userService->updateUser($user, $request->validated(), $request->file('image_path'));
 
         return redirect()->route('users.index', $user)->with('success', 'User details has been updated successfully. ');
     }

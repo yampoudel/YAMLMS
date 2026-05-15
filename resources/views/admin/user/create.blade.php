@@ -189,6 +189,15 @@
                             @enderror
                         </div>
 
+                        <!-- Profile Image -->
+                        <div>
+                            <label for="user_image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                            <input type="file" name="image_path" id='user_image_path' accept="image/*" 
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            @error('image_path')
+                                <span class="text-red-700">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Submit -->
