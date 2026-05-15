@@ -45,6 +45,7 @@
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2 border">S.N.</th>
+                                <th class="px-4 py-2 border">Profile Pic</th>
                                 <th class="px-4 py-2 border">First Name</th>
                                 <th class="px-4 py-2 border">Last Name</th>
                                 <th class="px-4 py-2 border">Role</th>
@@ -64,6 +65,9 @@
                             @foreach ($users as $index => $user)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-2 border">{{ $users->firstItem() + $index }}</td>
+                                    <td class="px-4 py-2 border"><img src="{{ $user->image_path_url }}" alt="{{ $user->first_name }}" 
+                                        class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
+                                    </td>
                                     <td class="px-4 py-2 border">{{ $user->first_name }}</td>
                                     <td class="px-4 py-2 border">{{ $user->last_name }}</td>
                                     <td class="px-4 py-2 border">{{ $user->role }}</td>

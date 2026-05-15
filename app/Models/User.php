@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -35,6 +36,7 @@ class User extends Authenticatable
         'city',
         'postcode',
         'suburb',
+        'image_path',
     ];
 
     // Get name
@@ -114,5 +116,19 @@ class User extends Authenticatable
     public function completedLessons(): HasMany
     {
         return $this->hasMany(LessonCompleted::class, 'user_id');
+    }
+
+    /**
+     * Get the full public URL for the user's profile image.
+     * Accessible in views as $user->image_path_url
+     */
+    public function getImagePathUrlAttribute(): string
+    {
+        if ($this->image_path && Storage::disk('public')->exists($this->image_path)) {
+            return asset('storage/'.$this->image_path);
+        }
+
+        // Dynamic UI-Avatars placeholder if no image exists
+        return 'https://ui-avatars.com'.urlencode($this->first_name.' '.$this->last_name).'&color=7F9CF5&background=EBF4FF';
     }
 }
