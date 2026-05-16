@@ -40,7 +40,6 @@
                                 </lablel>
                                 <input type='text' name ='title' id='title' value="{{ old('title') }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-
                                 @error('title')
                                     <span class="text-red-700">{{ $message }}</span>
                                 @enderror
@@ -51,11 +50,19 @@
                             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
                                 Course Description
                             </label>
-
                             <textarea name="description" id="description" maxlength="500"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description') }}</textarea>
-
                             @error('description')
+                                <span class="text-red-700">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Course Image -->
+                        <div>
+                            <label for="course_image_path" class="block text-sm font-medium text-gray-700 mb-1">Course Image</label>
+                            <input type="file" name="image_path" id='course_image_path' accept="image/*" 
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            @error('image_path')
                                 <span class="text-red-700">{{ $message }}</span>
                             @enderror
                         </div>

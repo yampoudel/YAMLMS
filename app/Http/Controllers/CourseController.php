@@ -63,7 +63,7 @@ class CourseController extends Controller
         }
 
         // Course data is already validated and store course here
-        $this->courseService->storeCourse($request->validated());
+        $this->courseService->storeCourse($request->validated(), $request->file('image_path'));
 
         return redirect()->route('courses.index')
             ->with('success', 'Course has been created successfully.');
@@ -106,9 +106,9 @@ class CourseController extends Controller
         }
 
         // Course data is already validate and updating here
-        $this->courseService->updateCourse($course, $request->validated());
+        $this->courseService->updateCourse($course, $request->validated(), $request->file('image_path'));
 
-        return redirect()->route('courses.edit', $course)
+        return redirect()->route('courses.index', $course)
             ->with('success', 'Course has been updated successfully');
     }
 
