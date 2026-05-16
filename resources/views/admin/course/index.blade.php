@@ -40,6 +40,7 @@
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2 border">S.N.</th>
+                                <th class="px-4 py-2 border">Course Image</th>
                                 <th class="px-4 py-2 border">Course Title</th>
                                 <th class="px-4 py-2 border">Couse Description</th>
                                 <th class="px-4 py-2 border">Created By</th>
@@ -51,6 +52,9 @@
                             @foreach ($courses as $index => $course)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-2 border">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-2 border"><img src="{{ $course->course_image_url }}" alt="{{ $course->title }}" 
+                                        class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
+                                    </td>
                                     <td class="px-4 py-2 border">{{ $course->title }}</td>
                                     <td class="px-4 py-2 border">{{ $course->description }}</td>
                                     <td class="px-4 py-2 border">{{ $course->created_by }}</td>

@@ -55,9 +55,9 @@ class UserService
     {
         // Check if a new file has been uploaded
         if ($file) {
-            // Delete the old file from storage disk if it exists
-            if ($validated_user['image_path']) {
-                Storage::disk('public')->delete($validated_user['image_path']);
+            // Check and delete from the existing $user record
+            if ($user->image_path) {
+                Storage::disk('public')->delete($user->image_path);
             }
 
             // Store the new file in the 'user-images' directory and save its path

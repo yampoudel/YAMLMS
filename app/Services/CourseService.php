@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Course;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class CourseService
 {
@@ -31,10 +33,15 @@ class CourseService
     /**
      * Store user
      */
-    public function storeCourse(array $validated_course): Course
+    public function storeCourse(array $validated_course, ?UploadedFile $file = null): Course
     {
         // Adding course created Id
         $validated_course['created_by'] = auth()->id();
+
+        // Handle file if exists
+        if ($file) {
+            $validated_course['image_path'] = $file->store('course-images', 'public');
+        }
 
         // Add course to the table
         return Course::create($validated_course);
@@ -43,8 +50,19 @@ class CourseService
     /**
      * Update course
      */
-    public function updateCourse(Course $course, array $validated_course): Course
+    public function updateCourse(Course $course, array $validated_course, ?UploadedFile $file = null): Course
     {
+        // Check if new file has been uploaded
+        if ($file) {
+            // Check and delete from the existing $course record
+            if ($course->image_path) {
+                Storage::disk('public')->delete($course->image_path);
+            }
+
+            // Store the new file in the 'course-images' directory and save its path
+            $validated_course['image_path'] = $file->store('course-images', 'public');
+        }
+
         $course->update($validated_course);
 
         return $course;
