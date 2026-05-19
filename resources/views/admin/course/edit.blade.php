@@ -73,12 +73,23 @@
                             @enderror
                         </div>
 
+                        <!-- Price -->
+                        <div>
+                            <label for='price' class="block text-sm font-medium text-gray-700 mb-1"> Course Price
+                                </lablel>
+                                <input type='number' name ='price' id='price' step='0.01', min='0' value="{{ old('price', $course->price) }}"
+                                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                                @error('price')
+                                    <span class="text-red-700">{{ $message }}</span>
+                                @enderror
+                        </div>
+
                         <!-- Course Image -->
                         <div>
                             <label for="course_image_path" class="block text-sm font-medium text-gray-700 mb-1">Course Image</label>
                             <div class="mb-3 flex items-center space-x-4">
                                 <div class="relative">
-                                    <img id="course-preview-display" src="{{ $course->course_image_url }}" alt="Current Course Image" 
+                                    <img id="course-preview-display" src="{{ $course->course_image_url }}" alt="Current Course Image"
                                         class="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm">
                                 </div>
                                 <div class="text-xs text-gray-500">
@@ -125,11 +136,11 @@
             function handleImagePreview(inputField) {
             if (inputField.files && inputField.files[0]) {
                 const fileReader = new FileReader();
-                
+
                 fileReader.onload = function(event) {
                     document.getElementById('course-preview-display').src = event.target.result;
                 };
-                
+
                 fileReader.readAsDataURL(inputField.files[0]);
             }
         }

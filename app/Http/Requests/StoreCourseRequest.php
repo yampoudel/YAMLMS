@@ -29,6 +29,7 @@ class StoreCourseRequest extends FormRequest
             // validate incoming course data
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'price' => ['required', 'numeric', 'min:0', 'decimal:0,2'],
             'image_path' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'], // Max 2MB of file
         ];
     }
