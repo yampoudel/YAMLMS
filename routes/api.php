@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\Integrations\StripeCheckoutController;
 use App\Http\Controllers\Api\Integrations\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +60,6 @@ Route::prefix('integrations')->group(function () {
         Route::post('/webhook', [StripeWebhookController::class, 'handleWebhook']);
 
         // Checkout intent creation endpoint (Protected - Requires user login token)
-        Route::post('/intent/{course}', [StripeCheckoutController::class, 'createIntent'])->middleware('auth:sanctum');
+        Route::post('/intent/{course}', [StripeCheckoutController::class, 'createIntent'])->middleware('auth');
     });
 });

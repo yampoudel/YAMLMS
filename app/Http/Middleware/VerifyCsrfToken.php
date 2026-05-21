@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // Tell Laravel to leave this specific endpoint wide open to outside signals
+        'api/integrations/stripe/webhook',
     ];
 }

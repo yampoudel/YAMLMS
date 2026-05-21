@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Course;
 use App\Models\Enrolment;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -34,17 +35,22 @@ class EnrolmentService
     /**
      * Enroll User
      */
-    public function enrollUser(int $user_id, int $course_id, int $enrolled_by)
+    public function enrollUser(int $user_id, int $course_id, int $enrolled_by): Enrolment
     {
         // Check if the enrolment is already available
         if (Enrolment::alreadyExists($user_id, $course_id)) {
             throw new \Exception('This enrolment is already exists');
         }
 
+        // If course price is more then 0 it should be paid first
+        $course = Course::findOrFail($course_id);
+        $status = $course->price > 0 ? 'Pending_Payment' : 'Active';
+
         // Create enrolment
-        Enrolment::create([
+        return Enrolment::create([
             'user_id' => $user_id,
             'course_id' => $course_id,
+            'status' => $status,
             'enrolled_at' => now(),
             'enrolled_by' => $enrolled_by,
         ]);
@@ -53,7 +59,7 @@ class EnrolmentService
     /**
      * Delete Enrolment
      */
-    public function deleteEnrolment(Enrolment $enrolment)
+    public function deleteEnrolment(Enrolment $enrolment): bool
     {
         // Check user either admin or not
         if (! auth()->user()->isAdmin()) {
