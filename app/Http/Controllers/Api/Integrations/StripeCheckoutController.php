@@ -21,14 +21,45 @@ class StripeCheckoutController extends Controller
      * Create a secure Payment Intent session on Stripe's sandbox servers.
      * Accessible at: POST /api/integrations/stripe/intent/{course}
      */
-    public function createIntent(Course $course)
+    /**
+     * Create a secure Payment Intent session on Stripe's sandbox servers.
+     * Accessible at: POST /api/integrations/stripe/intent/{course}
+     */
+    public function createIntent($id)
     {
-        $user = auth()->user();
-
         try {
+            // Explicitly fetch the course inside the safety net to catch database errors
+            $course = Course::findOrFail($id);
+
+            if (! $course) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "LMS Error: Course ID {$id} does not exist in the database.",
+                ], 404);
+            }
+
+            $user = auth('web')->user();
+
+            if (! $user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User session not found. Please re-authenticate.',
+                ], 401);
+            }
+
+            // Stripe take in as cents
+            $amount_in_cents = (int) ($course->price * 100);
+
+            if ($amount_in_cents <= 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Invalid course price tier detected for course: {$course->title}.",
+                ], 400);
+            }
+
             // Initialize a transaction payload on stripe sandbox server
             $intent = $this->stripe->paymentIntents->create([
-                'amount' => $course->price * 100,
+                'amount' => $amount_in_cents,
                 'currency' => 'AUD',
                 'automatic_payment_methods' => ['enabled' => true],
                 'metadata' => [
@@ -42,7 +73,7 @@ class StripeCheckoutController extends Controller
                 'user_id' => $user->id,
                 'course_id' => $course->id,
                 'stripe_payment_intent_id' => $intent->id,
-                'amount' => $course->price * 100, // stores in cents as stripe architecture
+                'amount' => $amount_in_cents,
                 'status' => 'Pending',
             ]);
 
@@ -54,10 +85,11 @@ class StripeCheckoutController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            // ANY crash (including database column errors) will now be forced to show up here!
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'CRASH CAUGHT: '.$e->getMessage().' in file '.$e->getFile().' on line '.$e->getLine(),
+            ], 200); // Forcing a 200 status so your browser JS can read and alert the exact error string
         }
     }
 }

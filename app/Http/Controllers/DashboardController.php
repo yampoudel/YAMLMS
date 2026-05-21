@@ -33,7 +33,9 @@ class DashboardController extends Controller
             $data['total_enrolments'] = Enrolment::whereRelation('course', 'created_by', $user->id)->count();
         } elseif ($user->isLearner()) {
             // Get courses where this user is enrolled
-            $data['enrolled_courses'] = Course::whereRelation('enrolments', 'user_id', $user->id)->with('lessons', 'creator')->get();
+            $data['enrolled_courses'] = $user->courses()
+                ->with(['lessons', 'creator'])
+                ->get();
             $data['total_courses'] = $data['enrolled_courses']->count();
         }
 

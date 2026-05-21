@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Integrations;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enrolment;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Stripe\Exception\SignatureVerificationException;
@@ -41,8 +42,11 @@ class StripeWebhookController extends Controller
                     'status' => 'Completed',
                 ]);
 
-                // Enrolment attachment logic is paused for now as per your strategy,
-                // and will be handled during the Admin refactor PR.
+                // Update enrolment table as Active
+                Enrolment::updateOrCreate(
+                    ['user_id' => $order->user_id, 'course_id' => $order->course_id],
+                    ['status' => 'Active'],
+                );
             }
         }
 

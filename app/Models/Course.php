@@ -28,7 +28,7 @@ class Course extends Model
     // Get the enrolments for this course
     public function enrolments(): HasMany
     {
-        return $this->HasMany(Enrolment::class);
+        return $this->HasMany(Enrolment::class, 'course_id');
     }
 
     // Get the list of users belongs to this course
@@ -39,6 +39,7 @@ class Course extends Model
             'lms_enrolments',
             'id',
             'course_id',
+            'status',
             'user_id'
         );
     }

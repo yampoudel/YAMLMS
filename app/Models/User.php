@@ -69,13 +69,14 @@ class User extends Authenticatable
     // Get the list of courses belongs to this user
     public function courses(): BelongsToMany
     {
-        return $this->BelongsToMany(
+        return $this->belongsToMany(
             Course::class,
-            'lms_enrolments',// bridging table
+            'lms_enrolments', // bridging table
             'user_id',
             'course_id'
-        )->withPivot('enrolled_at', 'enrolled_by')
-            ->withTimeStamps();
+        )
+            ->withPivot('status', 'enrolled_at', 'enrolled_by')
+            ->withTimestamps();
     }
 
     // Check super admin

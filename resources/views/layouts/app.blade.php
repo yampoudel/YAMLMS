@@ -14,6 +14,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://js.stripe.com/dahlia/stripe.js"></script>
 </head>
 
 <body class="font-sans antialiased">
