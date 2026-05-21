@@ -15,6 +15,11 @@
 *   **Adaptive Progress Tracking:** Real-time state persistence across devices.
 *   **Compliance-Locked Certification:** Automated PDF generation via **DomPDF**, cryptographically locked until 100% completion.
 
+### 💰 Secure E-Commerce & Monitization
+*   **Stripe Elements Integration:** Implements an on-demand frontend `StripePaymentGateway` utilizing Stripe's unified secure frames.
+*   **Tokenless Stateful Checkout:** Intercepts frontend transactions via `confirmPayment()` to reduce PCI compliance overhead, mapping directly to Laravel web session guards.
+*   **Asynchronous Webhook Processing:** A signature-verified, cryptographic listener captures background events to automatically settle orders and provision learning access.
+
 ### 🛡️ Admin & Compliance (Audit-Ready)
 *   **Workforce Oversight:** Real-time compliance monitoring for managers.
 *   **Government-Standard Reporting:** One-click PDF reports designed for NDIS regulatory audits.
@@ -34,8 +39,9 @@
 | :--- | :--- |
 | **Backend** | **Laravel 12** |
 | **PHP Runtime** | **PHP 8.5** |
-| **Authentication** | Laravel Breeze & Sanctum |
-| **Frontend** | Tailwind CSS v4 & Blade Components |
+| **Authentication** | Laravel Breeze & Sanctum (Stateful-Enabled API stack) |
+| **Frontend** | Tailwind CSS v4 & Stripe SDK (Dahlia Release Channel) |
+| **Payment Gateway** | Stripe API (Payment Intents Architecture) |
 | **Database** | MySQL (Production) / SQLite (Testing) |
 | **Testing** | Pest 3.x / PHPUnit |
 
@@ -44,6 +50,7 @@
 ## 🧪 Quality Assurance & Security
 *   **Logic Verification:** Unit tests for `ProgressService` ensure mathematical accuracy.
 *   **Route Gating:** Feature tests ensure certificates cannot be accessed via URL manipulation.
+*   **Signature Verification:** Webhook payloads require a valid `Stripe-Signature` validation handshake before processing.
 *   **Automation:** Full test suite ensures zero regressions.
     ```bash
     php artisan test
@@ -59,14 +66,28 @@
    composer install
    npm install && npm run build
    ```
+
 2. **Environment Configuration**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
+   Configure your Stripe Sandbox tokens inside your `.env` configuration file:
+   ```env
+   STRIPE_KEY=pk_test_your_publishable_key
+   STRIPE_SECRET=sk_test_your_secret_key
+   STRIPE_WEBHOOK_SECRET=whsec_your_local_tunnel_secret
+   ```
+
 3. **Database Migration**
    ```bash
    php artisan migrate --seed
+   ```
+
+4. **Local Webhook Execution (Development Only)**
+   To test e-commerce transactions locally, open a separate terminal window and forward real-time cloud payment notifications to your app:
+   ```bash
+   stripe listen --forward-to yamlms.test/api/integrations/stripe/webhook
    ```
 
 ---
