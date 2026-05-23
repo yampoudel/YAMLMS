@@ -10,7 +10,7 @@
     </head>
     <body class="antialiased font-sans bg-white text-slate-900">
         <div class="relative min-h-screen">
-            
+
             <!-- NAVIGATION -->
             <nav class="flex items-center justify-between px-10 py-5 border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
                 <div class="flex items-center gap-3">
@@ -54,7 +54,7 @@
             <section id="services" class="py-24 max-w-7xl mx-auto px-10">
                 <h2 class="text-xs font-black text-indigo-600 uppercase tracking-[0.3em] mb-4 text-center">Our Services</h2>
                 <h3 class="text-4xl font-black text-slate-900 text-center mb-16 italic">Built for Scalable Learning.</h3>
-                
+
                 <div class="grid md:grid-cols-3 gap-12">
                     <div class="space-y-4 p-8 border border-slate-100 rounded-2xl hover:shadow-xl transition">
                         <div class="w-12 h-12 bg-indigo-600 rounded flex items-center justify-center text-white font-bold text-xl">01</div>
@@ -103,9 +103,15 @@
                     {{-- THIS IS THE FRONTEND PURCHASE UI --}}
                     @foreach($courses ?? [] as $course)
                         <div class="bg-white border-2 border-slate-100 rounded-2xl p-6 hover:border-indigo-600 transition group">
-                            <div class="h-40 bg-slate-100 rounded-xl mb-6 flex items-center justify-center font-black text-slate-300 text-4xl uppercase">
-                                {{ substr($course->title, 0, 1) }}
+                            @if ($course->image_path)
+                            <div>
+                                <img src="{{ asset('storage/'. $course->image_path) }}" alt="{{ $course->title }}" class="w-full h-full object-cover select-one">
                             </div>
+                            @else
+                                <div class="h-40 bg-slate-100 rounded-xl mb-6 flex items-center justify-center font-black text-slate-300 text-4xl uppercase">
+                                    {{ substr($course->title, 0, 1) }}
+                                </div>
+                            @endif
                             <h4 class="text-xl font-black mb-2">{{ $course->title }}</h4>
                             <p class="text-slate-500 text-sm mb-6 line-clamp-2">{{ $course->description }}</p>
                             <div class="flex items-center justify-between mt-auto">
@@ -114,7 +120,7 @@
                             </div>
                         </div>
                     @endforeach
-                    
+
                     {{-- FALLBACK IF NO COURSES IN DB --}}
                     @if(empty($courses))
                         <p class="col-span-3 text-center text-slate-400 py-10 border-2 border-dashed border-slate-100 rounded-2xl">

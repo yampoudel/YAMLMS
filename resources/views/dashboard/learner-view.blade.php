@@ -41,7 +41,11 @@
                 <!-- Card Layout Wrapper -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col h-full">
                     <div class="h-32 bg-indigo-600 flex items-center justify-center relative">
-                        <span class="text-white text-3xl font-bold">{{ substr($course->title, 0, 1) }}</span>
+                        @if ($course->image_path)
+                            <img src="{{ asset('storage/'. $course->image_path) }}" alt="{{ $course->title }}" class="w-full h-full object-cover select-one">
+                        @else
+                            <span class="text-white text-3xl font-bold">{{ substr($course->title, 0, 1) }}</span>
+                        @endif
 
                         {{-- Show a progress percentage badge if they've started and aren't pending payment --}}
                         @if($progress && $progress->progress_percentage > 0 && $course->pivot->status !== 'Pending_Payment')
