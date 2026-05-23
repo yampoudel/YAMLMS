@@ -52,12 +52,12 @@
                             @foreach ($courses as $index => $course)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-2 border">{{ $index + 1 }}</td>
-                                    <td class="px-4 py-2 border"><img src="{{ $course->course_image_url }}" alt="{{ $course->title }}" 
+                                    <td class="px-4 py-2 border"><img src="{{ $course->course_image_url }}" alt="{{ $course->title }}"
                                         class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
                                     </td>
                                     <td class="px-4 py-2 border">{{ $course->title }}</td>
                                     <td class="px-4 py-2 border">{{ $course->description }}</td>
-                                    <td class="px-4 py-2 border">{{ $course->created_by }}</td>
+                                    <td class="px-4 py-2 border">{{ $course->creator->name}}</td>
                                     <td class="px-4 py-2 border">
                                         <a href="{{ route('courses.edit', $course->id) }}"
                                             class="text-blue-600 hover:underline">
