@@ -15,6 +15,9 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://js.stripe.com/dahlia/stripe.js"></script>
+
+    {{-- push scripts from other areas when needed --}}
+    @stack('scripts')
 </head>
 
 <body class="font-sans antialiased">
