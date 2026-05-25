@@ -1,3 +1,7 @@
+@push('scripts')
+    @vite(['resources/js/course/course-validation.js'])
+@endpush
+
 <x-app-layout>
     {{-- Header Section --}}
     <x-slot name="header">
@@ -31,7 +35,7 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('courses.store') }}" method="POST" enctype="multipart/form-data">
+                <form name="courseForm" action="{{ route('courses.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Title -->
@@ -40,9 +44,12 @@
                                 </lablel>
                                 <input type='text' name ='title' id='title' value="{{ old('title') }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                                @error('title')
-                                    <span class="text-red-700">{{ $message }}</span>
-                                @enderror
+                                <span class="js-title-error text-red-700 text-sm block mt-1">
+                                    @error('title')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+
                         </div>
 
                         <!-- Course Description -->
@@ -52,9 +59,11 @@
                             </label>
                             <textarea name="description" id="description" maxlength="500"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description') }}</textarea>
-                            @error('description')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-description-error text-red-700 text-sm block mt-1">
+                                    @error('description')
+                                        {{ $message }}
+                                    @enderror
+                            </span>
                         </div>
 
                         <!-- Price -->
@@ -63,9 +72,11 @@
                                 </lablel>
                                 <input type='number' name ='price' id='price' step='0.01', min='0' value="{{ old('price') }}"
                                     class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                                @error('price')
-                                    <span class="text-red-700">{{ $message }}</span>
-                                @enderror
+                                <span class="js-price-error text-red-700 text-sm block mt-1">
+                                    @error('price')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                         </div>
 
                         <!-- Course Image -->
@@ -73,16 +84,18 @@
                             <label for="course_image_path" class="block text-sm font-medium text-gray-700 mb-1">Course Image</label>
                             <input type="file" name="image_path" id='course_image_path' accept="image/*"
                                 class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            @error('image_path')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-image-error text-red-700 text-sm block mt-1">
+                                @error('image_path')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
                     </div>
 
                     <!-- Submit -->
                     <div class="mt-8 text-center">
                         <button type="submit"
-                            class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
+                            class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200" onclick="return validateCourse(this.form)">
                             Add Course
                         </button>
                     </div>
