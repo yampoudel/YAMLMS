@@ -4,6 +4,10 @@
         .ck-editor__editable_inline {
             min-height: 300px;
         }
+        /* Instantly hides the duplicate editor block if a second one tries to spawn */
+        .mt-8 .ck-editor + .ck-editor {
+            display: none !important;
+        }
     </style>
     {{-- Header Section --}}
     <x-slot name="header">

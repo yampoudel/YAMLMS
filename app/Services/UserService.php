@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -34,12 +35,17 @@ class UserService
         // Hash the password before saving for db
         $validated_user['password'] = Hash::make($validated_user['password']);
 
-        // Deafult value
+        // Default value
         $validated_user['join_date'] = now();
         $validated_user['last_login'] = null;
 
-        // Create the user in the database
-        $user = User::create($validated_user);
+        try {
+            // Create the user normally
+            $user = User::create($validated_user);
+        } catch (UniqueConstraintViolationException $e) {
+            // Safe fallback if duplicate request beats the insert
+            $user = User::where('login', trim($validated_user['login']))->first();
+        }
 
         // Return for welcome email
         return [

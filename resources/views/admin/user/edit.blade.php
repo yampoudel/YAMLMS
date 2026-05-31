@@ -1,3 +1,7 @@
+@push('scripts')
+   @vite(['resources/js/user/user-validation.js'])
+@endpush
+
 <x-app-layout>
     {{-- Header Section --}}
     <x-slot name="header">
@@ -37,7 +41,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
+                <form id="userForm" name="userForm" action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -57,9 +61,11 @@
                                     Teacher
                                 </option>
                             </select>
-                            @error('role')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-role-error text-red-700 text-sm block mt-1">
+                                @error('role')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Login -->
@@ -67,9 +73,11 @@
                             <label for="login" class="block text-sm font-medium text-gray-700 mb-1">Login</label>
                             <input type="text" name="login" id="login" value="{{ old('login', $user->login) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('login')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-login-error text-red-700 text-sm block mt-1">
+                                @error('login')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- First Name -->
@@ -79,9 +87,11 @@
                             <input type="text" name="first_name" id="first_name"
                                 value ="{{ old('first_name', $user->first_name) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('first_name')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-firstname-error text-red-700 text-sm block mt-1">
+                                @error('first_name')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Last Name -->
@@ -91,9 +101,11 @@
                             <input type="text" name="last_name" id="last_name"
                                 value="{{ old('last_name', $user->last_name) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('last_name')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-lastname-error text-red-700 text-sm block mt-1">
+                                @error('last_name')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Email -->
@@ -102,9 +114,11 @@
                             <input type="text" name="email" id="email"
                                 value="{{ old('email', $user->email) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('email')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-email-error text-red-700 text-sm block mt-1">
+                                @error('email')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Status -->
@@ -118,10 +132,11 @@
                                     value="Disabled"{{ old('status', $user->status) == 'Disabled' ? 'selected' : '' }}>
                                     Disabled</option>
                             </select>
-                            @error('status')
-                                <span class="text-red-700">
-                                    {{ $message }}</span>
-                            @enderror
+                            <span class="js-status-error text-red-700 text-sm block mt-1">
+                                @error('status')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Birthdate -->
@@ -131,9 +146,11 @@
                             <input type="date" name="birth_date" id="birth_date"
                                 value="{{ old('birth_date', $user->birth_date?->format('Y-m-d')) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('birth_date')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-birthdate-error text-red-700 text-sm block mt-1">
+                                @error('birth_date')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Phone -->
@@ -142,9 +159,11 @@
                             <input type="text" name="phone" id="phone"
                                 value="{{ old('phone', $user->phone) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('phone')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-phone-error text-red-700 text-sm block mt-1">
+                                @error('phone')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Mobile -->
@@ -153,9 +172,11 @@
                             <input type="text" name="mobile" id="mobile"
                                 value="{{ old('login', $user->mobile) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('mobile')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-mobile-error text-red-700 text-sm block mt-1">
+                                @error('mobile')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Country -->
@@ -164,9 +185,11 @@
                             <input type="text" name="country" id="country"
                                 value="{{ old('login', $user->country) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('country')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-country-error text-red-700 text-sm block mt-1">
+                                @error('country')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- City -->
@@ -175,9 +198,11 @@
                             <input type="text" name="city" id="city"
                                 value="{{ old('login', $user->city) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('city')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-city-error text-red-700 text-sm block mt-1">
+                                @error('city')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Postcode -->
@@ -187,9 +212,11 @@
                             <input type="text" name="postcode" id="postcode"
                                 value="{{ old('postcode', $user->postcode) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('postcode')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-postcode-error text-red-700 text-sm block mt-1">
+                                @error('postcode')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Suburb -->
@@ -198,9 +225,11 @@
                             <input type="text" name="suburb" id="suburb"
                                 value="{{ old('login', $user->suburb) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('suburb')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-suburb-error text-red-700 text-sm block mt-1">
+                                @error('suburb')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Profile Image -->
@@ -208,7 +237,7 @@
                             <label for="user_image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
                             <div class="mb-3 flex items-center space-x-4">
                                 <div class="relative">
-                                    <img id="profile-preview-display" src="{{ $user->image_path_url }}" alt="Current Profile Image" 
+                                    <img id="profile-preview-display" src="{{ $user->image_path_url }}" alt="Current Profile Image"
                                         class="w-16 h-16 rounded-full object-cover border border-gray-300 shadow-sm">
                                 </div>
                                 <div class="text-xs text-gray-500">
@@ -220,9 +249,11 @@
                             <!-- Upload Input Field -->
                             <input type="file" name="image_path" id="user_image_path" accept="image/*" onchange="handleImagePreview(this)"
                                 class="block w-full text-sm text-gray-500 mt-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            @error('image_path')
-                                <span class="text-red-700 text-sm mt-1 block">{{ $message }}</span>
-                            @enderror
+                           <span class="js-image-error text-red-700 text-sm block mt-1">
+                                @error('image_path')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
                     </div>
 
@@ -239,7 +270,9 @@
     </div>
 
     @push('scripts')
-        <script>
+    <script>
+        // Wait until the DOM elements are fully painted on screen
+        document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const el = document.getElementById('notify_user_updated');
                 if (el) {
@@ -250,19 +283,88 @@
                         el.remove();
                     }, 800); // match transition duration
                 }
-            }, 3000); // wait 5 seconds before fading
+            }, 3000); // wait 3 seconds before fading
 
+            const form = document.getElementById('userForm');
+
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    // STOPS the instant form submission immediately!
+                    e.preventDefault();
+
+                    let imageError = document.querySelector('.js-image-error');
+                    let imageInput = document.querySelector('[name="image_path"]');
+                    if (imageError && imageError.innerText.trim() !== "") {
+                        if (imageInput) imageInput.focus();
+                        return false;
+                    }
+
+                    const routes = {
+                        login: "{{ route('users.checkLogin', ['id' => $user->id]) }}",
+                        email: "{{ route('users.checkEmail', ['id' => $user->id]) }}"
+                    };
+
+                    // PAUSES right here until all your async checks finish
+                    let isValid = await window.userValidation(this, routes);
+
+                    // ONLY submit if your code returns a strict TRUE value
+                    if (isValid === true) {
+                        this.submit();
+                    }
+                });
+            }
+        });
+
+        // Isolated Image Handler: Wipes out the file immediately if it breaks any rule
         function handleImagePreview(inputField) {
+            let imageError = document.querySelector('.js-image-error');
+            if (imageError) imageError.innerText = "";
+
             if (inputField.files && inputField.files[0]) {
+                let file = inputField.files[0];
+
+                // Pre-validate file type
+                if (!file.type.startsWith('image/')) {
+                    if (imageError) imageError.innerText = "The file must be an image.";
+                    inputField.value = '';
+                    return;
+                }
+
+                // Pre-validate mime extensions
+                let fileName = file.name.toLowerCase();
+                let allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+                let fileExtension = fileName.split('.').pop();
+
+                if (!allowedExtensions.includes(fileExtension)) {
+                    if (imageError) imageError.innerText = "The image must be a file of type: png, jpg, jpeg, webp.";
+                    inputField.value = ''; // FORCE RESET: Clears the invalid file
+                    return;
+                }
+
+                // 3. Pre-validate size (Max 2MB)
+                let maxSizeInBytes = 2048 * 1024;
+
+                if (file.size > maxSizeInBytes) {
+                    if (imageError) imageError.innerText = "The image must not be greater than 2MB.";
+                    // FORCE RESET: Deletes the oversized file instantly!
+                    inputField.value = '';
+
+                    // Reset the image preview back to the original database profile image
+                    document.getElementById('profile-preview-display').src = "{{ $user->image_path_url }}";
+
+                    return;
+                }
+
+                // File is perfectly valid! Safely render preview to the container
                 const fileReader = new FileReader();
-                
+
                 fileReader.onload = function(event) {
                     document.getElementById('profile-preview-display').src = event.target.result;
                 };
-                
-                fileReader.readAsDataURL(inputField.files[0]);
+
+                fileReader.readAsDataURL(file);
             }
         }
-        </script>
+    </script>
     @endpush
 </x-app-layout>

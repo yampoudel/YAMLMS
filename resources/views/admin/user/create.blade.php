@@ -1,3 +1,7 @@
+@push('scripts')
+   @vite(['resources/js/user/user-validation.js'])
+@endpush
+
 <x-app-layout>
     {{-- Header Section --}}
     <x-slot name="header">
@@ -31,7 +35,7 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="userForm" name="userForm" action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -46,9 +50,11 @@
                                 <option value="Teacher"{{ old('role') == 'Teacher' ? 'selected' : '' }}>Teacher
                                 </option>
                             </select>
-                            @error('role')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-role-error text-red-700 text-sm block mt-1">
+                                @error('role')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Login -->
@@ -56,9 +62,11 @@
                             <label for="login" class="block text-sm font-medium text-gray-700 mb-1">Login</label>
                             <input type="text" name="login" id="login" value="{{ old('login') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('login')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-login-error text-red-700 text-sm block mt-1">
+                                @error('login')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- First Name -->
@@ -67,9 +75,11 @@
                                 Name</label>
                             <input type="text" name="first_name" id="first_name" value ="{{ old('first_name') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('first_name')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-firstname-error text-red-700 text-sm block mt-1">
+                                @error('first_name')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Last Name -->
@@ -78,9 +88,11 @@
                                 Name</label>
                             <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('last_name')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-lastname-error text-red-700 text-sm block mt-1">
+                                @error('last_name')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Email -->
@@ -88,9 +100,11 @@
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                             <input type="text" name="email" id="email" value="{{ old('email') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('email')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-email-error text-red-700 text-sm block mt-1">
+                                @error('email')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Password -->
@@ -98,9 +112,11 @@
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                             <input type="text" name="password" id="password" value="{{ old('password') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('password')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-password-error text-red-700 text-sm block mt-1">
+                                @error('password')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Status -->
@@ -112,9 +128,11 @@
                                 <option value="Disabled"{{ old('status') == 'Disabled' ? 'selected' : '' }}>Disabled
                                 </option>
                             </select>
-                            @error('status')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-status-error text-red-700 text-sm block mt-1">
+                                @error('status')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Birthdate -->
@@ -123,9 +141,11 @@
                                 Birth</label>
                             <input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('birth_date')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-birthdate-error text-red-700 text-sm block mt-1">
+                                @error('birth_date')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Phone -->
@@ -133,9 +153,11 @@
                             <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                             <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('phone')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-phone-error text-red-700 text-sm block mt-1">
+                                @error('phone')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Mobile -->
@@ -143,9 +165,11 @@
                             <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">Mobile</label>
                             <input type="text" name="mobile" id="mobile" value="{{ old('mobile') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('mobile')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-mobile-error text-red-700 text-sm block mt-1">
+                                @error('mobile')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Country -->
@@ -153,9 +177,11 @@
                             <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
                             <input type="text" name="country" id="country" value="{{ old('country') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('country')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-country-error text-red-700 text-sm block mt-1">
+                                @error('country')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- City -->
@@ -163,9 +189,11 @@
                             <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
                             <input type="text" name="city" id="city" value="{{ old('city') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('city')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-city-error text-red-700 text-sm block mt-1">
+                                @error('city')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Postcode -->
@@ -174,9 +202,11 @@
                                 Code</label>
                             <input type="text" name="postcode" id="postcode" value="{{ old('postcode') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('postcode')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-postcode-error text-red-700 text-sm block mt-1">
+                                @error('postcode')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Suburb -->
@@ -184,19 +214,23 @@
                             <label for="suburb" class="block text-sm font-medium text-gray-700 mb-1">Suburb</label>
                             <input type="text" name="suburb" id="suburb" value="{{ old('suburb') }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('suburb')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-suburb-error text-red-700 text-sm block mt-1">
+                                @error('suburb')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Profile Image -->
                         <div>
                             <label for="user_image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
-                            <input type="file" name="image_path" id='user_image_path' accept="image/*" 
+                            <input type="file" name="image_path" id='user_image_path' accept="image/*"
                                 class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                            @error('image_path')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                            <span class="js-image-error text-red-700 text-sm block mt-1">
+                                @error('image_path')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
                     </div>
 
@@ -207,9 +241,35 @@
                             Add User
                         </button>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script type="module">
+        // Wait until the DOM elements are fully painted on screen
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('userForm');
+
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault(); // STOPS the instant form submission immediately!
+
+                    const routes = {
+                        login: "{{ route('users.checkLogin') }}",
+                        email: "{{ route('users.checkEmail') }}"
+                    };
+
+                    // PAUSES right here until all your async checks finish
+                    let isValid = await window.userValidation(this, routes);
+
+                    // ONLY submit if your code returns a strict TRUE value
+                    if (isValid === true) {
+                        this.submit();
+                    }
+                });
+            }
+        });
+    </script>
+    @endpush
 </x-app-layout>
