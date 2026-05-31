@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\EmailService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -122,5 +123,45 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('users.index')->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Check unique login
+     */
+    public function checkLoginUnique(Request $request)
+    {
+        // Automatically captures your 'login' value from the URL query string
+        $login_value = $request->input('login');
+
+        if (! $login_value) {
+            return response()->json(['isUnique' => true]);
+        }
+
+        // Query the table safely
+        $exists = User::where('login', $login_value)->exists();
+
+        return response()->json([
+            'isUnique' => ! $exists,
+        ]);
+    }
+
+    /**
+     * Check unique login
+     */
+    public function checkEmailUnique(Request $request)
+    {
+        // Automatically captures your 'email' value from the URL query string
+        $email_value = $request->input('email');
+
+        if (! $email_value) {
+            return response()->json(['isUnique' => true]);
+        }
+
+        // Query the table safely
+        $exists = User::where('email', $email_value)->exists();
+
+        return response()->json([
+            'isUnique' => ! $exists,
+        ]);
     }
 }
