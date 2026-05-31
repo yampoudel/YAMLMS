@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // SHARED: User List & Courses
     Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/check-login-uniqueness', [UserController::class, 'checkLoginUnique'])->name('users.checkLogin');
+    Route::get('/check-email-uniqueness', [UserController::class, 'checkEmailUnique'])->name('users.checkEmail');
+
     Route::resource('courses', CourseController::class);
 
     // SHARED: Enrolment Module (Custom parameters)

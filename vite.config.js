@@ -9,7 +9,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/course/course-validation.js'
+                'resources/js/course/course-validation.js',
+                'resources/js/user/user-validation.js'
             ],
             refresh: true,
         }),
