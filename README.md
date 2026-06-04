@@ -1,4 +1,4 @@
-# YamLMS | Yet Another Multi-tenant LMS
+# YamLMS | Yet Another Learning Portal
 
 [![Laravel 12](https://shields.io)](https://laravel.com)
 [![PHP 8.5](https://shields.io)](https://php.net/releases/8.5/en.php)
