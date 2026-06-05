@@ -21,6 +21,7 @@ class Course extends Model
         'title',
         'description',
         'price',
+        'status',
         'created_by',
         'image_path',
     ];

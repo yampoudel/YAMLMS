@@ -93,6 +93,21 @@
                                 </span>
                         </div>
 
+                        <!-- Status -->
+                        <div>
+                            <label for='status' class="block text-sm font-medium text-gray-700 mb-1"> Course Status
+                                </lablel>
+                                <select name="status" id="status" class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                                    <option value="Active" {{ old('status', $course->status) == 'Active' ? 'selected' : ''}}>Active</option>
+                                    <option value="Disabled" {{ old('status', $course->status) == 'Disabled' ? 'selected' : ''}}>Disabled</option>
+                                </select>
+                                <span class="js-status-error text-red-700 text-sm block mt-1">
+                                    @error('status')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                        </div>
+
                         <!-- Course Image -->
                         <div>
                             <label for="course_image_path" class="block text-sm font-medium text-gray-700 mb-1">Course Image</label>

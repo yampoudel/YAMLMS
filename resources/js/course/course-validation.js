@@ -3,18 +3,21 @@ window.validateCourse = function (formElement) {
     let titleInput = formElement.querySelector('[name="title"]');
     let descriptionInput = formElement.querySelector('[name="description"]');
     let priceInput = formElement.querySelector('[name="price"]');
+    let statusInput = formElement.querySelector('[name="status"]');
     let imageInput = formElement.querySelector('[name="image_path"]');
 
     // Grab all input errors
     let titleError = formElement.querySelector('.js-title-error');
     let descriptionError = formElement.querySelector('.js-description-error');
     let priceError = formElement.querySelector('.js-price-error');
+    let statusError = formElement.querySelector('.js-status-error');
     let imageInputError = formElement.querySelector('.js-image-error');
 
     // Instantly clear old messages (clears previous Laravel errors for all the fields)
     if (titleError) titleError.innerText = "";
     if (descriptionError) descriptionError.innerText = "";
     if (priceError) priceError.innerText = "";
+    if (statusError) statusError.innerText = "";
     if (imageInputError) imageInputError.innerText = "";
 
     // Validate Title
@@ -50,6 +53,21 @@ window.validateCourse = function (formElement) {
         if (parseFloat(priceValue) < 0) {
             if (priceError) priceError.innerText = "The course price should be at least 0";
             priceInput.focus();
+            return false;
+        }
+    }
+
+    // Validate Status
+    if (statusInput) {
+        let statusValue = (statusInput.value || '').trim();
+
+        if (statusValue === "") {
+            if (statusError) statusError.innerText = "The status field is required.";
+            statusInput.focus();
+            return false;
+        } else if (!['Active', 'Disabled'].includes(statusValue)) {
+            if (statusError) statusError.innerText = "The selected status is invalid.";
+            statusInput.focus();
             return false;
         }
     }

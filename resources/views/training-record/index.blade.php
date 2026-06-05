@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-black text-2xl text-slate-800 leading-tight">
-            {{ auth()->user()->isLearner() ? '🎓 My Training History' : '📋 Unified record Records' }}
+            {{ auth()->user()->isLearner() ? '🎓 My Training History' : '📋 Training Records' }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl rounded-lg border border-slate-200 overflow-hidden">
-                
+
                 {{-- Learner View --}}
                 @if(auth()->user()->isLearner())
                     <div class="p-8">
