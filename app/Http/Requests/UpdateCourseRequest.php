@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\validation\Rule;
 
 class UpdateCourseRequest extends FormRequest
 {
@@ -27,6 +28,7 @@ class UpdateCourseRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0', 'decimal:0,2'],
+            'status' => ['string', Rule::in(['Active', 'Disabled'])],
             'image_path' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'], // Max 2MB of file
         ];
     }

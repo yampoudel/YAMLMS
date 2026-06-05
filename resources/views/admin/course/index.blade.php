@@ -42,7 +42,9 @@
                                 <th class="px-4 py-2 border">S.N.</th>
                                 <th class="px-4 py-2 border">Course Image</th>
                                 <th class="px-4 py-2 border">Course Title</th>
-                                <th class="px-4 py-2 border">Couse Description</th>
+                                <th class="px-4 py-2 border">Course Description</th>
+                                <th class="px-4 py-2 border">Course Price(AUD)</th>
+                                <th class="px-4 py-2 border">Course Status</th>
                                 <th class="px-4 py-2 border">Created By</th>
                                 <th class="px-4 py-2 border" colspan="2">Actions</th>
                             </tr>
@@ -57,6 +59,8 @@
                                     </td>
                                     <td class="px-4 py-2 border">{{ $course->title }}</td>
                                     <td class="px-4 py-2 border">{{ $course->description }}</td>
+                                    <td class="px-4 py-2 border">{{ $course->price}}</td>
+                                    <td class="px-4 py-2 border">{{ $course->status}}</td>
                                     <td class="px-4 py-2 border">{{ $course->creator->name}}</td>
                                     <td class="px-4 py-2 border">
                                         <a href="{{ route('courses.edit', $course->id) }}"
