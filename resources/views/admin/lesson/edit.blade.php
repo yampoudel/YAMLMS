@@ -1,3 +1,7 @@
+@push('scripts')
+    @vite(['resources/js/lesson/lesson-validation.js'])
+@endpush
+
 <x-app-layout>
     <style>
         /* This targets the editor's editable area specifically */
@@ -42,7 +46,7 @@
     <div class="py-6">
         <div class="w-full px-4">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('lessons.update', $lesson) }}" method="POST">
+                <form name="lessonForm" id="lessonForm" action="{{ route('lessons.update', $lesson) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -54,9 +58,11 @@
                             <input type="text" name="title" id="title"
                                 value="{{ old('title', $lesson->title) }}"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-                            @error('title')
-                                <span class="text-red-700 text-sm">{{ $message }}</span>
-                            @enderror
+                            <span class="js-title-error text-red-700 text-sm block mt-1">
+                                @error('title')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Course Assign -->
@@ -73,9 +79,11 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('course_id')
-                                <span class="text-red-700 text-sm">{{ $message }}</span>
-                            @enderror
+                            <span class="js-course-id-error text-red-700 text-sm block mt-1">
+                                @error('course_id')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Lesson Status -->
@@ -90,6 +98,11 @@
                                     {{ old('status', $lesson->status) === 'Disabled' ? 'selected' : '' }}>Disabled
                                 </option>
                             </select>
+                            <span class="js-status-error text-red-700 text-sm block mt-1">
+                                @error('status')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Lesson Type -->
@@ -106,6 +119,11 @@
                                 <option value="Quiz" {{ old('type', $lesson->type) === 'Quiz' ? 'selected' : '' }}>
                                     Quiz</option>
                             </select>
+                            <span class="js-type-error text-red-700 text-sm block mt-1">
+                                @error('type')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
 
                         <!-- Description - FORCED FULL WIDTH -->
@@ -114,6 +132,11 @@
                                 class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                             <textarea name="description" id="description" rows="3"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description', $lesson->description) }}</textarea>
+                            <span class="js-description-error text-red-700 text-sm block mt-1">
+                                @error('description')
+                                    {{ $message }}
+                                @enderror
+                            </span>
                         </div>
                     </div>
 
@@ -122,9 +145,11 @@
                         <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Lesson
                             Content</label>
                         <textarea name="content" id="content" class="w-full">{{ old('content', $lesson->content[0]['value'] ?? '') }}</textarea>
-                        @error('content')
-                            <span class="text-red-700 text-sm">{{ $message }}</span>
-                        @enderror
+                        <span class="js-content-error text-red-700 text-sm block mt-1">
+                            @error('content')
+                                {{ $message }}
+                            @enderror
+                        </span>
                     </div>
 
                     <!-- Submit -->
@@ -140,19 +165,51 @@
     </div>
 
     @push('scripts')
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Check if the editor is loaded and the element exists
-                const editorElement = document.querySelector('#content');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('lessonForm');
+            const editorElement = document.querySelector('#content');
 
-                if (editorElement && window.ClassicEditor) {
-                    window.ClassicEditor
-                        .create(editorElement)
-                        .catch(error => {
-                            console.error('CKEditor error:', error);
-                        });
-                }
-            });
-        </script>
+            // Initialize CKEditor 5 and save the editor instance
+            if (editorElement && window.ClassicEditor) {
+                window.ClassicEditor
+                    .create(editorElement)
+                    .then(newEditor => {
+                        // Saves instance to a global variable
+                        window.editor = newEditor;
+                    })
+                    .catch(error => {
+                        console.error('CKEditor error:', error);
+                    });
+            }
+
+            // Bind the form validation safely after DOM loads
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Sync the data right away so the validation file can see it
+                    if (window.editor && editorElement) {
+                        editorElement.value = window.editor.getData();
+                    }
+
+                    // Get validation status
+                    let isValid = window.lessonValidation(form);
+
+                    // Only stop the form if validation actually fails!
+                    if (isValid !== true) {
+                        // Stop the form submission
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Let the browser submit naturally. This stops the text from being wiped out.
+                    const btn = form.querySelector('button[type="submit"]');
+                    if (btn) {
+                        // Small timeout keeps the button click stream alive while disabling double clicks
+                        setTimeout(() => { btn.disabled = true; }, 1);
+                    }
+                });
+            }
+        });
+    </script>
     @endpush
 </x-app-layout>

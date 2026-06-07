@@ -60,9 +60,9 @@
                             <textarea name="description" id="description" maxlength="500"
                                 class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">{{ old('description') }}</textarea>
                             <span class="js-description-error text-red-700 text-sm block mt-1">
-                                    @error('description')
-                                        {{ $message }}
-                                    @enderror
+                                @error('description')
+                                    {{ $message }}
+                                @enderror
                             </span>
                         </div>
 

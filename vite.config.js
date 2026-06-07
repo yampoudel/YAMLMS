@@ -10,7 +10,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/course/course-validation.js',
-                'resources/js/user/user-validation.js'
+                'resources/js/user/user-validation.js',
+                'resources/js/lesson/lesson-validation.js'
             ],
             refresh: true,
         }),
