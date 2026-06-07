@@ -4,7 +4,7 @@
 [![PHP 8.5](https://shields.io)](https://php.net/releases/8.5/en.php)
 [![TailwindCSS 4](https://shields.io)](https://tailwindcss.com)
 
-**YamLMS** is a high-performance, multi-tenant Learning Management System engineered for high-compliance industries such as **Aged Care, NDIS providers, and Educational Institutions**, as well as **any company or trader who needs to provide training to their customers**. Built on the cutting-edge **Laravel 12** framework and optimized for **PHP 8.5**, it delivers a secure, audit-ready digital ecosystem for modern workforce and client training.
+**YamLMS** is a high-performance, Learning Management System engineered for high-compliance industries such as **Aged Care, NDIS providers, and Educational Institutions**, as well as **any company or trader who needs to provide training to their customers**. Built on the cutting-edge **Laravel 12** framework and optimized for **PHP 8.5**, it delivers a secure, audit-ready digital ecosystem for modern workforce and client training.
 
 ---
 
