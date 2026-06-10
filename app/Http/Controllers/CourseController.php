@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateCourseRequest;
 use App\Models\Course;
 use App\Services\CourseService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -20,13 +21,13 @@ class CourseController extends Controller
     /**
      * Display a listing of the course.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         // Check policy
         $this->authorize('viewAny', Course::class);
 
-        // Get list of courses
-        $courses = $this->courseService->getCourseList(15);
+        // Pass all filter inputs directly to the service
+        $courses = $this->courseService->getCourseList(15, $request->only(['title', 'status']));
 
         return view('admin.course.index', compact('courses'));
     }

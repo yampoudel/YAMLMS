@@ -12,22 +12,33 @@ class CourseService
     /**
      * Get all courses based on user
      */
-    public function getCourseList(int $per_page): LengthAwarePaginator
+    public function getCourseList(int $per_page, array $filters = []): LengthAwarePaginator
     {
         $user = auth()->user();
 
-        // Only admin can see all the courses
-        if (auth()->user()->isAdmin()) {
-            return Course::paginate($per_page);
+        // Set up the correct base query depending on user role
+        if ($user->isAdmin()) {
+            $query = Course::query();
+        } elseif ($user->role === 'Teacher') {
+            $query = Course::where('created_by', $user->id);
+        } else {
+            // If they are neither, return an empty query safely
+            $query = Course::whereRaw('1 = 0');
         }
 
-        // If teacher will see the courses which are created by themselves
-        if (auth()->user()->role === 'Teacher') {
-            return Course::where('created_by', $user->id)->paginate($per_page);
-        }
+        // Apply search filters to the query builder
+        $query->when(! empty($filters['title']), function ($q) use ($filters) {
+            $q->where('title', 'like', '%'.$filters['title'].'%');
+        });
 
-        // Default: Return an empty paginator or throw an exception
-        return Course::where('id', 0)->paginate($per_page);
+        $query->when(! empty($filters['status']), function ($q) use ($filters) {
+            $q->where('status', $filters['status']);
+        });
+
+        // Apply sorting and pagination with query parameters preserved
+        return $query->orderBy('created_at', 'desc')
+            ->paginate($per_page)
+            ->withQueryString();
     }
 
     /**
