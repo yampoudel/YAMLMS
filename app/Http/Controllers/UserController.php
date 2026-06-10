@@ -20,12 +20,21 @@ class UserController extends Controller
     /**
      * Display a listing of the user.
      */
-    public function index(): View
+    public function index(Request $request): View
     {   // Check policy
         $this->authorize('viewAny', User::class);
 
-        // Get all users
-        $users = $this->userService->getUserList(15);
+        // User listing with optional filters for role and status
+        $role = $request->query('role');
+        $status = $request->query('status');
+
+        $users = User::when($role, function ($query, $role) {
+            return $query->where('role', $role);
+        })->when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        })
+            ->paginate(15)
+            ->withQueryString(); // keep filters working across pages!
 
         return view('admin.user.index', compact('users'));
     }
