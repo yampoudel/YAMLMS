@@ -40,8 +40,45 @@
                     </div>
                 @endif
 
-                <div class="bg-white shadow-sm sm:rounded-lg p-4 overflow-x-auto">
-                    <table class="min-w-full border border-gray-200">
+                    <div class="flex flex-row gap-4">
+                        <aside class="basis-1/3 flex-shrink-0 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <form method="GET" action="{{ route('users.index') }}" class="flex flex-col gap-3">
+                                <label class="block">
+                                    <span class="text-sm font-medium text-gray-700">User Type</span>
+                                    <select name="role"
+                                        class="mt-1 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">All Types</option>
+                                        <option value="Admin" {{ request('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="Teacher" {{ request('role') === 'Teacher' ? 'selected' : '' }}>Teacher</option>
+                                        <option value="Learner" {{ request('role') === 'Learner' ? 'selected' : '' }}>Learner</option>
+                                    </select>
+                                </label>
+
+                                <label class="block">
+                                    <span class="text-sm font-medium text-gray-700">Status</span>
+                                    <select name="status"
+                                        class="mt-1 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">All Statuses</option>
+                                        <option value="Active" {{ request('status') === 'Active' ? 'selected' : '' }}>Active</option>
+                                        <option value="Disabled" {{ request('status') === 'Disabled' ? 'selected' : '' }}>Disabled</option>
+                                    </select>
+                                </label>
+
+                                <button type="submit"
+                                    class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
+                                    Search
+                                </button>
+                            </form>
+
+                        </aside>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="w-full mb-4 text-gray-600 pl-4">
+                                Total Users: <span class="font-bold">{{ $users->total() }}</span>
+                            </div>
+
+                            <div class="overflow-x-auto bg-white rounded-lg p-4">
+                                <table class="min-w-full border border-gray-200">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2 border">S.N.</th>
@@ -65,7 +102,7 @@
                             @foreach ($users as $index => $user)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-2 border">{{ $users->firstItem() + $index }}</td>
-                                    <td class="px-4 py-2 border"><img src="{{ $user->image_path_url }}" alt="{{ $user->first_name }}" 
+                                    <td class="px-4 py-2 border"><img src="{{ $user->image_path_url }}" alt="{{ $user->first_name }}"
                                         class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
                                     </td>
                                     <td class="px-4 py-2 border">{{ $user->first_name }}</td>
