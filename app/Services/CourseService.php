@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class CourseService
 {
     /**
-     * Get all courses based on user
+     * Get all courses based on user and search filters.
      */
     public function getCourseList(int $per_page, array $filters = []): LengthAwarePaginator
     {

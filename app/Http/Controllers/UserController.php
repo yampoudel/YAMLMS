@@ -24,17 +24,8 @@ class UserController extends Controller
     {   // Check policy
         $this->authorize('viewAny', User::class);
 
-        // User listing with optional filters for role and status
-        $role = $request->query('role');
-        $status = $request->query('status');
-
-        $users = User::when($role, function ($query, $role) {
-            return $query->where('role', $role);
-        })->when($status, function ($query, $status) {
-            return $query->where('status', $status);
-        })
-            ->paginate(15)
-            ->withQueryString(); // keep filters working across pages!
+        // Get the user list by passing the limit and only the requested search filters
+        $users = $this->userService->getUserList(15, $request->only(['role', 'status']));
 
         return view('admin.user.index', compact('users'));
     }
