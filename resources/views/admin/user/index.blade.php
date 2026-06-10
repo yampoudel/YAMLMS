@@ -2,18 +2,26 @@
     {{-- Header Section --}}
     <x-slot name="header">
         <div class="flex items-center justify-between w-full">
-            <!-- SECTION 1: Extreme Left (The Button) -->
+            <!-- SECTION 1: Extreme Left -->
             <div class="flex-1 flex justify-start gap-4">
                 @can('create', App\Models\User::class)
                     <a href="{{ route('users.create') }}"
                         class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
-                        <span class="mr-2">+</span> Add User
+                        + Add User
                     </a>
                 @endcan
 
                 <a href="{{ route('enrolments.index') }}"
                     class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
                     Enrolment List
+                </a>
+
+                <a href="{{ route('users.index', array_merge(request()->all(), ['search' => 1])) }}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-gray-700 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" />
+                    </svg>
+                    <span class="opacity-90">Search</span>
                 </a>
             </div>
 
@@ -27,6 +35,49 @@
             <!-- SECTION 3: Right Spacer (Keeps the title perfectly in the middle) -->
             <div class="flex-1"></div>
         </div>
+
+        {{-- Search Section --}}
+        @if(request()->has('search'))
+            <div class="w-full px-4 mt-4">
+                <div class="mb-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <form action="{{ route('users.index') }}" method="GET" class="grid gap-4 lg:grid-cols-[1fr_auto] items-end">
+                        <div class="grid gap-4 sm:grid-cols-2 flex-1">
+                            <div>
+                                <label for="role" class="block text-sm font-medium text-gray-700">User Type</label>
+                                <select id="role" name="role"
+                                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="" {{ request('role') === null || request('role') === '' ? 'selected' : '' }}>All Types</option>
+                                    <option value="Admin" {{ request('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="Teacher" {{ request('role') === 'Teacher' ? 'selected' : '' }}>Teacher</option>
+                                    <option value="Learner" {{ request('role') === 'Learner' ? 'selected' : '' }}>Learner</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="status" name="status"
+                                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="" {{ request('status') === null || request('status') === '' ? 'selected' : '' }}>All</option>
+                                    <option value="Active" {{ request('status') === 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Disabled" {{ request('status') === 'Disabled' ? 'selected' : '' }}>Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="submit" name="search" value="1"
+                                class="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition-all duration-200">
+                                Search
+                            </button>
+                            <a href="{{ route('users.index') }}"
+                                class="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                                Reset
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
     </x-slot>
 
     {{-- Main Content --}}
@@ -41,37 +92,6 @@
                 @endif
 
                     <div class="flex flex-row gap-4">
-                        <aside class="basis-1/3 flex-shrink-0 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <form method="GET" action="{{ route('users.index') }}" class="flex flex-col gap-3">
-                                <label class="block">
-                                    <span class="text-sm font-medium text-gray-700">User Type</span>
-                                    <select name="role"
-                                        class="mt-1 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">All Types</option>
-                                        <option value="Admin" {{ request('role') === 'Admin' ? 'selected' : '' }}>Admin</option>
-                                        <option value="Teacher" {{ request('role') === 'Teacher' ? 'selected' : '' }}>Teacher</option>
-                                        <option value="Learner" {{ request('role') === 'Learner' ? 'selected' : '' }}>Learner</option>
-                                    </select>
-                                </label>
-
-                                <label class="block">
-                                    <span class="text-sm font-medium text-gray-700">Status</span>
-                                    <select name="status"
-                                        class="mt-1 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">All Statuses</option>
-                                        <option value="Active" {{ request('status') === 'Active' ? 'selected' : '' }}>Active</option>
-                                        <option value="Disabled" {{ request('status') === 'Disabled' ? 'selected' : '' }}>Disabled</option>
-                                    </select>
-                                </label>
-
-                                <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
-                                    Search
-                                </button>
-                            </form>
-
-                        </aside>
-
                         <div class="flex-1 min-w-0">
                             <div class="w-full mb-4 text-gray-600 pl-4">
                                 Total Users: <span class="font-bold">{{ $users->total() }}</span>

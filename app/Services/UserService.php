@@ -12,11 +12,20 @@ use Illuminate\Support\Facades\Storage;
 class UserService
 {
     /**
-     * Get All users
+     * Get all users with optional filters for role and status.
      */
-    public function getUserList($per_page = 15): LengthAwarePaginator
+    public function getUserList(int $per_page = 15, array $filters = []): LengthAwarePaginator
     {
-        return User::paginate($per_page);
+        return User::query()
+            ->when(! empty($filters['role']), function ($q) use ($filters) {
+                $q->where('role', $filters['role']);
+            })
+            ->when(! empty($filters['status']), function ($q) use ($filters) {
+                $q->where('status', $filters['status']);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($per_page)
+            ->withQueryString();
     }
 
     /**
