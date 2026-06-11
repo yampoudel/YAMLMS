@@ -9,24 +9,33 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class LessonService
 {
     /**
-     * Get all the lessons
-     *
-     * @param  int  $per_page
+     * Get all the lessons based on user and search filters.
      */
-    public function getLessonList($per_page = 15): LengthAwarePaginator
+    public function getLessonList(int $per_page = 15, array $filters = []): LengthAwarePaginator
     {
         $user = auth()->user();
 
-        if (! $user->isAdmin()) {
-            return Lesson::with(['course', 'creator'])
-                ->where('created_by', $user->id)
-                ->orderBy('position')
-                ->paginate($per_page);
+        // Set up the correct base query with relationships depending on user role
+        if ($user->isAdmin()) {
+            $query = Lesson::with(['course', 'creator']);
+        } else {
+            // Teacher will only see courses they created themselves
+            $query = Lesson::with(['course', 'creator'])->where('created_by', $user->id);
         }
 
-        return Lesson::with(['course', 'creator'])
-            ->orderBy('position')
-            ->paginate($per_page);
+        // Apply search filters to the query builder
+        $query->when(! empty($filters['title']), function ($q) use ($filters) {
+            $q->where('title', 'like', '%'.$filters['title'].'%');
+        });
+
+        $query->when(! empty($filters['status']), function ($q) use ($filters) {
+            $q->where('status', $filters['status']);
+        });
+
+        // Apply sorting and pagination with query parameters preserved
+        return $query->orderBy('position')
+            ->paginate($per_page)
+            ->withQueryString();
     }
 
     /**
