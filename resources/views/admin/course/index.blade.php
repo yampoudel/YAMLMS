@@ -127,7 +127,7 @@
                         </tbody>
                     </table>
                     <div class='mt-4'>
-                        {{ $courses->links() }}
+                        {{ $courses->appends(request()->query())->links() }}
                     </div>
                 </div>
             </div>

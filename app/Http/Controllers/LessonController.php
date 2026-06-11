@@ -28,13 +28,13 @@ class LessonController extends Controller
     /**
      * Display a listing of the lesson.
      */
-    public function index(): View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
         // Check policy
         $this->authorize('viewAny', Lesson::class);
 
-        // Get list of lessons
-        $lessons = $this->lessonService->getLessonList(15);
+        // Get list of lessons by passing the limit and only the requested search filters
+        $lessons = $this->lessonService->getLessonList(15, $request->only(['title', 'status']));
 
         return view('admin.lesson.index', compact('lessons'));
     }
