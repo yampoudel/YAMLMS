@@ -66,6 +66,9 @@ class UserService
     /**
      * Update user
      */
+    /**
+     * Update user
+     */
     public function updateUser(User $user, array $validated_user, ?UploadedFile $file = null): User
     {
         // Check if a new file has been uploaded
@@ -77,9 +80,13 @@ class UserService
 
             // Store the new file in the 'user-images' directory and save its path
             $validated_user['image_path'] = $file->store('user-images', 'public');
+        } else {
+            // If no new file is uploaded, remove 'image_path' from
+            // the array entirely so it doesn't overwrite the database column with null!
+            unset($validated_user['image_path']);
         }
 
-        // Update in database lms_usertable
+        // Update in database lms_user table
         $user->update($validated_user);
 
         return $user;
