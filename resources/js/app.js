@@ -1,11 +1,23 @@
 import './bootstrap';
 
-import Alpine from 'alpinejs';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
 
-window.Alpine = Alpine;
+createInertiaApp({
+    resolve: (name) => {
+        const pages = import.meta.glob('./Pages/**/*.vue');
 
-Alpine.start();
+        if (!pages[`./Pages/${name}.vue`]) {
+            throw new Error(`Inertia Page component not found: ./Pages/${name}.vue`);
+        }
 
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
-window.ClassicEditor = ClassicEditor;
+        return pages[`./Pages/${name}.vue`]();
+    },
+    setup({ el, App, props, plugin }) {
+        createApp({
+            render: () => h(App, props),
+        })
+            .use(plugin)
+            .mount(el);
+    },
+});

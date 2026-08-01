@@ -11,6 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class UserController extends Controller
 {
@@ -20,20 +22,23 @@ class UserController extends Controller
     /**
      * Display a listing of the user.
      */
-    public function index(Request $request): View
+    public function index(Request $request): InertiaResponse|RedirectResponse|View
     {   // Check policy
         $this->authorize('viewAny', User::class);
 
         // Get the user list by passing the limit and only the requested search filters
         $users = $this->userService->getUserList(15, $request->only(['role', 'status']));
 
-        return view('admin.user.index', compact('users'));
+        return Inertia::render('Admin/User/Index', [
+            'users' => $users,
+            'filters' => $request->only(['role', 'status']),
+        ]);
     }
 
     /**
      * Show the form for creating a new user
      */
-    public function create(): View|RedirectResponse
+    public function create(): InertiaResponse|RedirectResponse|View
     {
         // Check Policy
         if (Gate::denies('create', User::class)) {
@@ -47,7 +52,10 @@ class UserController extends Controller
             'back_button' => 'Back To Users',
         ];
 
-        return view('admin.user.create', compact('page_info'));
+        return Inertia::render('Admin/User/Create', [
+            'page_info' => $page_info,
+            'button_label' => __('buttons.users.create'),
+        ]);
     }
 
     /**
@@ -73,7 +81,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified user.
      */
-    public function edit(User $user): View|RedirectResponse
+    public function edit(User $user): InertiaResponse|RedirectResponse|View
     {
         // Check policy
         if (Gate::denies('update', $user)) {
@@ -87,7 +95,12 @@ class UserController extends Controller
             'back_button' => 'Back To Users',
         ];
 
-        return view('admin.user.edit', compact(['user', 'page_info']));
+        return Inertia::render('Admin/User/Edit', [
+            'user' => $user,
+            'page_info' => $page_info,
+            'button_label' => __('buttons.users.edit'),
+        ]);
+
     }
 
     /**

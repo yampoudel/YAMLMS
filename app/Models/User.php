@@ -39,6 +39,15 @@ class User extends Authenticatable
         'image_path',
     ];
 
+    /**
+     * The attributes that should be appended to model arrays.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'image_path_url',
+    ];
+
     // Get name
     public function getNameAttribute()
     {
@@ -129,7 +138,7 @@ class User extends Authenticatable
             return asset('storage/'.$this->image_path);
         }
 
-        // Dynamic UI-Avatars placeholder if no image exists
-        return 'https://ui-avatars.com'.urlencode($this->first_name.' '.$this->last_name).'&color=7F9CF5&background=EBF4FF';
+        // Fixed path: added /api/?name=
+        return 'https://ui-avatars.com/?name='.$this->first_name.' '.$this->last_name.'&color=7F9CF5&background=EBF4FF';
     }
 }
