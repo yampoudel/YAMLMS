@@ -26,6 +26,11 @@ class Course extends Model
         'image_path',
     ];
 
+    // The attributes that should be appended to model arrays.
+    protected $appends = [
+        'course_image_url',
+    ];
+
     // Get the enrolments for this course
     public function enrolments(): HasMany
     {
@@ -79,7 +84,8 @@ class Course extends Model
             return asset('storage/'.$this->image_path);
         }
 
-        // Dynamic UI-Avatars placeholder if no image exists
-        return 'https://ui-avatars.com'.urlencode($this->first_name.' '.$this->last_name).'&color=7F9CF5&background=EBF4FF';
+        $nameParam = urlencode($this->title ?? 'Course');
+
+        return "https://ui-avatars.com{$nameParam}&color=7F9CF5&background=EBF4FF";
     }
 }

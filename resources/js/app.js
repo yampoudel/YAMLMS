@@ -2,6 +2,7 @@ import './bootstrap';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
+import { ZiggyVue } from 'ziggy-js';
 
 createInertiaApp({
     resolve: (name) => {
@@ -18,6 +19,7 @@ createInertiaApp({
             render: () => h(App, props),
         })
             .use(plugin)
+            .use(ZiggyVue)
             .mount(el);
     },
 });

@@ -1,6 +1,7 @@
 <script setup>
 import Navigation from '@/Layouts/Partials/Navigation.vue';
 import Sidebar from '@/Layouts/Partials/Sidebar.vue';
+import Header from '@/Layouts/Partials/Header.vue';
 
 // Accept an optional page header title string prop
 defineProps({
@@ -25,20 +26,13 @@ defineProps({
             <!-- Content Area Right Side -->
             <div class="flex-1 overflow-auto">
 
-                <!-- Page Heading — Replaces Blade @isset($header) template section check -->
-                <header v-if="title" class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-full py-6 px-4">
-                        <h1 class="text-xl font-bold text-gray-800 dark:text-white leading-tight">
-                            {{ title }}
-                        </h1>
-                    </div>
-                </header>
+            <Header :title="title" />
 
-                <!-- Page Content — Replaces legacy Blade {{ $slot }} tag mapping -->
-                <main class="p-6">
-                    <!-- This slot directive dynamically injects view file (e.g. Index.vue or Create.vue) -->
-                    <slot />
-                </main>
+            <!-- Page Content — Replaces legacy Blade {{ $slot }} tag mapping -->
+            <main class="p-6">
+                <!-- This slot directive dynamically injects view file (e.g. Index.vue or Create.vue) -->
+                <slot />
+            </main>
 
             </div>
         </div>

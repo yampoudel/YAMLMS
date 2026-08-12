@@ -35,8 +35,9 @@ class CourseService
             $q->where('status', $filters['status']);
         });
 
-        // Apply sorting and pagination with query parameters preserved
-        return $query->orderBy('created_at', 'desc')
+        // Apply sorting, relation eager loading, and pagination with query parameters preserved
+        return $query->with(['creator:id,first_name,last_name']) // Fetch the real columns the accessor needs!
+            ->orderBy('created_at', 'desc')
             ->paginate($per_page)
             ->withQueryString();
     }

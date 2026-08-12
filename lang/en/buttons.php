@@ -7,17 +7,17 @@ return [
         'edit' => 'Edit User',
         'delete' => 'Delete User',
     ],
-    'course' => [
+    'courses' => [
         'create' => 'Create Course',
         'edit' => 'Edit Course',
         'delete' => 'Delete Course',
     ],
-    'lesson' => [
+    'lessons' => [
         'create' => 'Create Lesson',
         'edit' => 'Edit Lesson',
         'delete' => 'Delete Lesson',
     ],
-    'enrollment' => [
+    'enrollments' => [
         'create' => 'Create Enrollment',
         'edit' => 'Edit Enrollment',
         'delete' => 'Delete Enrollment',
