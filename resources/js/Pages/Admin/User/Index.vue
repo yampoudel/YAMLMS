@@ -1,14 +1,15 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import FlashNotification from '@/Components/FlashNotification.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { route } from 'ziggy-js';
 
 // Ingest structural properties from your UserController array payload
 const props = defineProps({
-    users: Object,
-    filters: Object,
+    users: { type: Object, required: true },
+    filters: { type: Object, required: true },
 });
 
 // Map global context states and notifications from the Inertia page instance
@@ -16,7 +17,8 @@ const page = usePage();
 const currentUser = computed(() => page.props.auth?.user || null);
 
 // Drive filter panel visibilities matching your request search state logic
-const isSearchOpen = ref(new URLSearchParams(window.location.search).has('search'));
+// Opens search panel on load if '?search' exists in the URL (SSR-safe)
+const isSearchOpen = ref(typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('search'));
 
 // Track input form elements reactively
 const form = ref({
@@ -24,21 +26,29 @@ const form = ref({
     status: props.filters?.status || ''
 });
 
+const userList = computed(() => props.users?.data || []);
+const totalUsers = computed(() => props.users?.total || userList.value.length || 0);
+const paginationLinks = computed(() => props.users?.links || []);
+
 // Fire search values straight through the SPA routing engine via explicit strings
 const handleSearch = () => {
-    router.get('/users', {
-        ...form.value,
-        search: 1
+    router.get(route('users.index'), {
+        role: form.value.role || undefined,
+        status: form.value.status || undefined,
+        search: 1,
     }, {
         preserveState: true,
-        replace: true
+        replace: true,
     });
 };
 
 // Bind explicit row row-deletion actions directly to your URL query pipeline
 const deleteUser = (id) => {
     if (confirm('Are you sure you want to delete this user?')) {
-        router.delete(`/users/${id}`);
+        router.delete(route('users.destroy', id), {
+            preserveState: true,
+            replace: true,
+        });
     }
 };
 </script>
@@ -117,8 +127,9 @@ const deleteUser = (id) => {
             <!-- Flash Notification Component -->
             <FlashNotification />
 
-            <div class="w-full text-gray-600 dark:text-gray-400 pl-2 text-sm mb-4">
-                Total Users: <span class="font-bold text-gray-900 dark:text-white">{{ users?.total || 0 }}</span>
+            <div class="w-full text-gray-600 dark:text-gray-400 pl-2 text-sm font-semibold mb-4">
+                Showing <span class="text-gray-900 dark:text-gray-100 font-bold">{{ userList.length || 0 }}</span> of <span class="text-gray-900 dark:text-gray-100 font-bold">{{ totalUsers || 0 }}</span>
+                 <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">Users</p>
             </div>
 
             <!-- Datagrid Frame Table Layout Layout -->
@@ -139,7 +150,7 @@ const deleteUser = (id) => {
                     </thead>
 
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                        <tr v-for="(user, index) in users?.data" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
+                        <tr v-for="(user, index) in userList" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
                             <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ (users?.from || 1) + index }}</td>
                             <td class="px-4 py-3 text-sm">
                                 <img :src="user.image_path_url || '/images/default-avatar.png'" :alt="user.first_name" class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600 shadow-xs" />
@@ -161,7 +172,7 @@ const deleteUser = (id) => {
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="!users?.data || users.data.length === 0">
+                        <tr v-if="!userList || userList.length === 0">
                             <td colspan="9" class="text-center py-10 text-gray-500 text-sm font-medium">No records found.</td>
                         </tr>
                     </tbody>
@@ -169,7 +180,7 @@ const deleteUser = (id) => {
             </div>
 
             <!-- Laravel Shared Pagination Properties Component -->
-            <Pagination v-if="users?.links" :links="users.links" />
+            <Pagination v-if="paginationLinks.length" :links="paginationLinks" />
         </div>
     </AuthenticatedLayout>
 </template>

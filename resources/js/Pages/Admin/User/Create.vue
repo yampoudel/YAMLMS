@@ -4,16 +4,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from '@/Components/Button.vue';
 
 // Ingest ALL properties from controller, including  dynamic button label
-defineProps({
-    page_info: {
-        type: Object,
-        required: true
-    },
-    button_label: {
-        type: String,
-        required: true
-    },
-    users: Object,
+const props = defineProps({
+    page_info: { type: Object, required: true },
+    button_label: { type: String, required: true },
 });
 
 // Initialize Inertia's form tracking matrix
@@ -195,12 +188,12 @@ const submitForm = () => {
                             <span v-if="form.errors.suburb" class="text-red-700 text-sm block mt-1 font-medium">{{ form.errors.suburb }}</span>
                         </div>
 
-                        <!-- Binary Media Document File Stream Picker Row -->
-                        <div class="md:col-span-2">
-                            <label for="image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
-                            <input type="file" id="image_path" @change="handleImageUpload"
-                                class="w-full border border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 text-sm text-gray-500" />
-                            <span v-if="form.errors.image_path" class="text-red-700 text-sm block mt-1 font-medium">{{ form.errors.image_path }}</span>
+                        <!-- Profile Image -->
+                        <div>
+                            <label for="profile_image" class="block text-base font-semibold text-gray-900 mb-3">Profile Image</label>
+                            <input type="file" name="image_path" id="profile_image" @change="handleImageUpload" accept="image/*"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <span v-if="form.errors.image_path" class="text-red-700 text-sm block mt-2">{{ form.errors.image_path }}</span>
                         </div>
 
                     </div>
@@ -212,7 +205,7 @@ const submitForm = () => {
                             Cancel
                         </Link>
 
-                        <Button :button_label="button_label":processing="form.processing"/>
+                        <Button :button_label="button_label" :processing="form.processing"/>
                     </div>
                 </form>
             </div>

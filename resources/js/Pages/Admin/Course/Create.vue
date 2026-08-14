@@ -6,19 +6,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from '@/Components/Button.vue';
 
 // Ingest ALL properties from controller, including dynamic button label
-defineProps({
-    page_info: {
-        type: Object,
-        required: true
-    },
-    button_label: {
-        type: String,
-        required: true
-    },
-    courses: {
-        type: Object,
-        required: true,
-    },
+const props = defineProps({
+    page_info: { type: Object, required: true },
+    button_label: { type: String, required: true },
+    courses: { type: Object, required: true },
 });
 
 // Initialize Inertia's form tracking matrix
@@ -48,7 +39,7 @@ const submitForm = () => {
 
 <template>
     <AuthenticatedLayout>
-        <div class="max-w-7xl mx-auto">
+        <div class="py-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Section Block Frame Wrapper Layout -->
             <header class="bg-white border-b border-gray-200 py-6 mb-6 rounded-lg p-4 shadow-sm">
                 <div class="flex items-center justify-between w-full">

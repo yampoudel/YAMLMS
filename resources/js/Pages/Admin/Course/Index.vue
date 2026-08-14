@@ -7,8 +7,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { route } from 'ziggy-js';
 
 const props = defineProps({
-    courses: Object,
-    filters: Object,
+    courses: { type: Object, required: true },
+    filters: { type: Object, required: false, default: () => ({}) },
 });
 
 const page = usePage();
@@ -131,7 +131,7 @@ const deleteCourse = (id) => {
                             <td class="px-4 py-3 text-sm">
                                 <div class="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                                     <img
-                                        :src="course.course_image_url || `https://ui-avatars.com{encodeURIComponent(course.title ?? 'Course')}&color=7F9CF5&background=EBF4FF`"
+                                        :src="course.course_image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(course.title ?? 'Course')}&color=7F9CF5&background=EBF4FF`"
                                         :alt="course.title"
                                         class="w-full h-full object-cover"
                                         loading="lazy"
