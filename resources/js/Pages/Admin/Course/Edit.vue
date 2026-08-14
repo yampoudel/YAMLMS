@@ -40,14 +40,14 @@ const handleImagePreview = (e) => {
     imageError.value = '';
     const file = e.target.files?.[0];
 
-    // Case 1: File selection cancelled
+    // File selection cancelled
     if (!file) {
         form.image_path = null;
         previewImage.value = props.course.course_image_url ?? '';
         return;
     }
 
-    // Case 2: Validation for raw file format type
+    // File type validation check
     if (!file.type.startsWith('image/')) {
         imageError.value = 'The file must be an image.';
         e.target.value = '';
@@ -55,7 +55,7 @@ const handleImagePreview = (e) => {
         return;
     }
 
-    // Case 3: Extension string validation check
+    // Extension string validation check
     const fileExtension = file.name.toLowerCase().split('.').pop();
     if (!['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
         imageError.value = 'The image must be a file of type: png, jpg, jpeg, webp.';
@@ -64,7 +64,7 @@ const handleImagePreview = (e) => {
         return;
     }
 
-    // Case 4: File size boundary check (2MB limits)
+    // File size boundary check (2MB limits)
     if (file.size > 2048 * 1024) {
         imageError.value = 'The image must not be greater than 2MB.';
         e.target.value = '';
@@ -117,7 +117,7 @@ const back_button = props.page_info.back_button ?? 'Back To Courses';
                 </div>
             </header>
 
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <div class="bg-white shadow-sm sm:rounded-lg p-8 border border-gray-200">
                 <form @submit.prevent="submitForm" class="space-y-6">
                     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
                         <!-- Title -->
@@ -167,13 +167,13 @@ const back_button = props.page_info.back_button ?? 'Back To Courses';
                     </div>
 
                     <!-- Submit -->
-                     <div class="flex flex-col gap-4 pt-8 border-gray-200 mt-8 sm:flex-row sm:items-center sm:justify-end">
+                    <div class="flex flex-col gap-4 pt-8 border-t border-gray-200 mt-8 sm:flex-row sm:items-center sm:justify-end">
                         <Link :href="route('courses.index')"
-                         class="items-center justify-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition duration-200">
-                          Cancel
+                            class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition duration-200">
+                            Cancel
                         </Link>
                         <Button :button_label="button_label" :processing="form.processing"/>
-                     </div>
+                    </div>
                 </form>
             </div>
         </div>

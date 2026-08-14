@@ -1,21 +1,15 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from '@/Components/Button.vue';
 
 const props = defineProps({
-    page_info: Object,
-    button_label: {
-        type: String,
-        required: true
-    },
-    user: Object,
+    user: { type: Object, required: true },
+    page_info: { type: Object, required: true },
+    button_label: { type: String, required: true },
 });
-
-const pageInfo = props.page_info ?? {};
-const previewImage = ref(props.user?.image_path_url ?? '');
-const imageError = ref('');
 
 const parseDateForInput = (value) => {
     if (!value) return null;
@@ -30,6 +24,7 @@ const parseDateForInput = (value) => {
     return date.toISOString().slice(0, 10);
 };
 
+// Setup form object (uses _method spoofing for safe multi-part file uploads)
 const form = useForm({
     role: props.user?.role ?? '',
     login: props.user?.login ?? '',
@@ -45,25 +40,35 @@ const form = useForm({
     postcode: props.user?.postcode ?? '',
     suburb: props.user?.suburb ?? '',
     image_path: undefined,
+    _method: 'PUT',
 });
 
-const submit = () => {
+const submitForm = () => {
     const userId = props.user?.id;
     if (!userId) return;
-    form.put(`/users/${userId}`);
+
+    // Converted to POST with PUT method spoofing to prevent Laravel upload failures
+    form.post(route('users.update', { user: userId }), {
+        preserveScroll: true,
+    });
 };
+
+// Image configuration variables matching your Course component structure
+const imageError = ref('');
+const previewImage = ref(props.user?.image_path_url ?? '');
 
 const handleImagePreview = (e) => {
     imageError.value = '';
     const file = e.target.files?.[0];
 
+    // File selection cancelled
     if (!file) {
-        // no new file selected; leave image_path undefined so existing image is preserved
         form.image_path = null;
         previewImage.value = props.user?.image_path_url ?? '';
         return;
     }
 
+    // Validation for raw file format type
     if (!file.type.startsWith('image/')) {
         imageError.value = 'The file must be an image.';
         e.target.value = '';
@@ -71,19 +76,17 @@ const handleImagePreview = (e) => {
         return;
     }
 
-    const fileName = file.name.toLowerCase();
-    const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
-    const fileExtension = fileName.split('.').pop();
-
-    if (!allowedExtensions.includes(fileExtension)) {
+    // Extension string validation check
+    const fileExtension = file.name.toLowerCase().split('.').pop();
+    if (!['png', 'jpg', 'jpeg', 'webp'].includes(fileExtension)) {
         imageError.value = 'The image must be a file of type: png, jpg, jpeg, webp.';
         e.target.value = '';
         form.image_path = null;
         return;
     }
 
-    const maxSizeInBytes = 2048 * 1024;
-    if (file.size > maxSizeInBytes) {
+    // File size boundary check (2MB limits)
+    if (file.size > 2048 * 1024) {
         imageError.value = 'The image must not be greater than 2MB.';
         e.target.value = '';
         form.image_path = null;
@@ -91,16 +94,16 @@ const handleImagePreview = (e) => {
         return;
     }
 
+    // Execution: Convert binary stream to a local visual text string wrapper
     const reader = new FileReader();
-    reader.onload = (event) => {
-        previewImage.value = event.target?.result;
-    };
+    reader.onload = (event) => { previewImage.value = event.target?.result; };
     reader.readAsDataURL(file);
     form.image_path = file;
 };
 
-const back_button = pageInfo.back_button ?? 'Back To Users';
-const title = pageInfo.title ?? 'Edit User';
+// Template constants
+const title = props.page_info.title ?? 'Edit User';
+const back_button = props.page_info.back_button ?? 'Back To Users';
 </script>
 
 <template>
@@ -134,7 +137,7 @@ const title = pageInfo.title ?? 'Edit User';
             </header>
 
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <form @submit.prevent="submit" class="space-y-6">
+                <form @submit.prevent="submitForm" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
@@ -235,12 +238,10 @@ const title = pageInfo.title ?? 'Edit User';
                         </div>
 
                         <div class="md:col-span-2">
-                            <label for="image_path" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
-                            <input id="image_path" name="image_path" type="file" accept="image/*"
-                                class="w-full border border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 text-sm text-gray-500"
-                                @change="handleImagePreview">
-                            <span v-if="form.errors.image_path" class="text-red-700 text-sm block mt-1 font-medium">{{ form.errors.image_path }}</span>
-                            <p v-if="imageError" class="text-red-700 text-sm block mt-1 font-medium">{{ imageError }}</p>
+                            <label for="image_path" class="block text-base font-semibold text-gray-900 mb-3">Profile Image</label>
+                            <input type="file" name="image_path" id="image_path" @change="handleImagePreview" accept="image/*"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <p v-if="form.errors.image_path || imageError" class="text-red-700 text-sm block mt-2 font-medium">{{ form.errors.image_path || imageError }}</p>
                             <div v-if="previewImage" class="mt-4">
                                 <img :src="previewImage" alt="Preview" class="h-32 w-32 object-cover rounded-md border" />
                             </div>
