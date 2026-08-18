@@ -50,6 +50,7 @@ const deleteCourse = (id) => {
 <template>
     <AuthenticatedLayout title="Courses">
         <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-200">
+            <!-- Header section -->
             <div class="flex items-center justify-between w-full pb-4 border-b border-gray-200 mb-6">
                 <div class="flex gap-4">
                     <Link :href="route('courses.create')"
@@ -105,6 +106,7 @@ const deleteCourse = (id) => {
 
             <FlashNotification />
 
+            <!-- Main content section -->
             <div class="w-full text-gray-600 pl-2 text-sm mb-4">
                 Total Courses: <span class="font-bold text-gray-900">{{ totalCourses }}</span>
             </div>

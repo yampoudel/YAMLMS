@@ -13,11 +13,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use inertia\Response as InertiaResponse;
 
 class LessonController extends Controller
 {
     /**
-     * Inject Lessonservice and ProgressService
+     * Inject Lessonservice , ProgressService and EmailService
      */
     public function __construct(
         protected LessonService $lessonService,
@@ -28,7 +30,7 @@ class LessonController extends Controller
     /**
      * Display a listing of the lesson.
      */
-    public function index(Request $request): View|RedirectResponse
+    public function index(Request $request): RedirectResponse|InertiaResponse
     {
         // Check policy
         $this->authorize('viewAny', Lesson::class);
@@ -36,13 +38,16 @@ class LessonController extends Controller
         // Get list of lessons by passing the limit and only the requested search filters
         $lessons = $this->lessonService->getLessonList(15, $request->only(['title', 'status']));
 
-        return view('admin.lesson.index', compact('lessons'));
+        return Inertia::render('Admin/Lesson/Index', [
+            'lessons' => $lessons,
+            'filters' => $request->only(['title', 'status']),
+        ]);
     }
 
     /**
      * Show the form for creating a new lesson.
      */
-    public function create(Request $request): View|RedirectResponse
+    public function create(Request $request): RedirectResponse|InertiaResponse
     {
         // Check policy
         if (Gate::denies('create', Lesson::class)) {
@@ -65,7 +70,12 @@ class LessonController extends Controller
         $courses = $user->isAdmin() ? Course::all() :
             Course::where('created_by', $user->id)->get();
 
-        return view('admin.lesson.create', compact('courses', 'page_info', 'selected_course_id'));
+        return Inertia::render('Admin/Lesson/Create', [
+            'courses' => $courses,
+            'page_info' => $page_info,
+            'selected_course_id' => $selected_course_id,
+            'button_label' => __('buttons.lessons.create'),
+        ]);
     }
 
     /**
@@ -89,7 +99,7 @@ class LessonController extends Controller
     /**
      * Show the form for editing the specified lesson.
      */
-    public function edit(Lesson $lesson): View
+    public function edit(Lesson $lesson): RedirectResponse|InertiaResponse
     {
         // Check policy
         if (Gate::denies('update', $lesson)) {
@@ -109,7 +119,12 @@ class LessonController extends Controller
         $courses = $user->isAdmin() ? Course::all() :
             Course::where('created_by', $user->id)->get();
 
-        return view('admin.lesson.edit', compact('lesson', 'courses', 'page_info'));
+        return Inertia::render('Admin/Lesson/Edit', [
+            'lesson' => $lesson,
+            'courses' => $courses,
+            'page_info' => $page_info,
+            'button_label' => __('buttons.lessons.edit'),
+        ]);
     }
 
     /**
