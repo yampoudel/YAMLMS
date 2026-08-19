@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class CourseController extends Controller
 {
@@ -21,7 +23,7 @@ class CourseController extends Controller
     /**
      * Display a listing of the course.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse|InertiaResponse
     {
         // Check policy
         $this->authorize('viewAny', Course::class);
@@ -29,13 +31,16 @@ class CourseController extends Controller
         // Pass all filter inputs directly to the service
         $courses = $this->courseService->getCourseList(15, $request->only(['title', 'status']));
 
-        return view('admin.course.index', compact('courses'));
+        return Inertia::render('Admin/Course/Index', [
+            'courses' => $courses,
+            'filters' => request()->only(['title', 'status']),
+        ]);
     }
 
     /**
      * Show the form for creating a new course
      */
-    public function create(): View|RedirectResponse
+    public function create(): RedirectResponse|InertiaResponse
     {
         // Check policy
         if (Gate::denies('create', Course::class)) {
@@ -49,7 +54,10 @@ class CourseController extends Controller
             'back_button' => 'Back To Courses',
         ];
 
-        return view('admin.course.create', compact('page_info'));
+        return Inertia::render('Admin/Course/Create', [
+            'page_info' => $page_info,
+            'button_label' => __('buttons.courses.create'),
+        ]);
     }
 
     /**
@@ -73,7 +81,7 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified course.
      */
-    public function edit(Course $course): View|RedirectResponse
+    public function edit(Course $course): RedirectResponse|InertiaResponse
     {
         // Uses the 'update' rule in CoursePolicy
         if (Gate::denies('update', $course)) {
@@ -92,7 +100,12 @@ class CourseController extends Controller
         $lessons = $course->lessons;
 
         // return edit page
-        return view('admin.course.edit', compact('course', 'lessons', 'page_info'));
+        return Inertia::render('Admin/Course/Edit', [
+            'course' => $course,
+            'lessons' => $lessons,
+            'page_info' => $page_info,
+            'button_label' => __('buttons.courses.edit'),
+        ]);
     }
 
     /**
