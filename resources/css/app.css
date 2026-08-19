@@ -1,6 +1,1 @@
 @import "tailwindcss";
-
-/* Tell Tailwind v4 exactly where your LMS views live */
-@source "../views/**/*.blade.php";
-@source "../js/**/*.vue";
-@source "../js/**/*.js";
