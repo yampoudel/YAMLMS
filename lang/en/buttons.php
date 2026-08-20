@@ -18,7 +18,7 @@ return [
         'delete' => 'Delete Lesson',
     ],
     'enrollments' => [
-        'create' => 'Enrol User',
+        'create' => 'Create Enrollment',
         'edit' => 'Edit Enrollment',
         'delete' => 'Delete Enrollment',
     ],
