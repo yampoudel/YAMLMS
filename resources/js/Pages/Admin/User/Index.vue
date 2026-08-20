@@ -145,7 +145,6 @@ const deleteUser = (id) => {
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Login</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Email</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
-
                             <th v-if="currentUser?.role === 'Admin' || currentUser?.role === 'Teacher'" class="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -166,17 +165,15 @@ const deleteUser = (id) => {
                                     {{ user.status }}
                                 </span>
                             </td>
-
                             <td v-if="currentUser?.role === 'Admin' || currentUser?.role === 'Teacher'" class="px-4 py-3 text-sm text-center">
                                 <div class="flex items-center justify-center gap-3">
-                                    <Link :href="route('enrolments.create', user.id)" class="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 hover:underline font-semibold">Course Enrol</Link>
-                                    <Link :href="route('users.edit', user.id)" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline font-semibold">Edit</Link>
-                                    <button @click="deleteUser(user.id)" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:underline font-semibold cursor-pointer">Delete</button>
+                                    <a :href="`/users/${user.id}/edit`" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">Edit</a>
+                                    <button @click="deleteUser(user.id)" class="text-red-600 dark:text-red-400 hover:underline font-semibold cursor-pointer">Delete</button>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="!userList || userList.length === 0">
-                            <td colspan="10" class="text-center py-10 text-gray-500 text-sm font-medium">No records found.</td>
+                            <td colspan="9" class="text-center py-10 text-gray-500 text-sm font-medium">No records found.</td>
                         </tr>
                     </tbody>
                 </table>
