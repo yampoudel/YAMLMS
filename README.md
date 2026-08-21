@@ -114,6 +114,33 @@ npm run dev             # Vite dev server with hot reload
 npm run build            # Build production assets
 ```
 
+## 📸 Screenshots
+
+<p align="center">
+   <strong>Admin — User Dashboard</strong><br>
+   <img src="docs/images/admin_user_dashboard.png" alt="Admin user dashboard" width="900">
+</p>
+
+<p align="center">
+   <strong>Admin — Course Dashboard</strong><br>
+   <img src="docs/images/admin_course_dashboard.png" alt="Admin course dashboard" width="900">
+</p>
+
+<p align="center">
+   <strong>Learner Portal</strong><br>
+   <img src="docs/images/learner_portal.png" alt="Learner portal" width="900">
+</p>
+
+<p align="center">
+   <strong>Stripe Checkout</strong><br>
+   <img src="docs/images/stripe_checkout.png" alt="Stripe checkout" width="900">
+</p>
+
+<p align="center">
+   <strong>Learner Training Record</strong><br>
+   <img src="docs/images/learner_training_record.png" alt="Learner training record" width="900">
+</p>
+
 ---
 
 **Built with ❤️ by Yam Poudel**
