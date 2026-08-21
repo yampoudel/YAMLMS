@@ -116,20 +116,30 @@ npm run build            # Build production assets
 
 ## 📸 Screenshots
 
-### Admin — User Dashboard
-![Admin User Dashboard](docs/%20images./admin-user-dashboard.png)
+<p align="center">
+   <strong>Admin — User Dashboard</strong><br>
+   <img src="docs/images/admin_user_dashboard.png" alt="Admin user dashboard" width="900">
+</p>
 
-### Admin — Course Dashboard
-![Admin Course Dashboard](docs/%20images./admin-course-dashboard.png)
+<p align="center">
+   <strong>Admin — Course Dashboard</strong><br>
+   <img src="docs/images/admin_course_dashboard.png" alt="Admin course dashboard" width="900">
+</p>
 
-### Learner Portal
-![Learner Portal](docs/%20images./learner-portal.png)
+<p align="center">
+   <strong>Learner Portal</strong><br>
+   <img src="docs/images/learner_portal.png" alt="Learner portal" width="900">
+</p>
 
-### Stripe Checkout
-![Stripe Checkout](docs/%20images./stripe-checkout.png)
+<p align="center">
+   <strong>Stripe Checkout</strong><br>
+   <img src="docs/images/stripe_checkout.png" alt="Stripe checkout" width="900">
+</p>
 
-### Learner Training Record
-![Learner Training Record](docs/%20images./learner-training-record.png)
+<p align="center">
+   <strong>Learner Training Record</strong><br>
+   <img src="docs/images/learner_training_record.png" alt="Learner training record" width="900">
+</p>
 
 ---
 
