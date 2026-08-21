@@ -9,8 +9,7 @@ use App\Models\User;
 use App\Services\EnrolmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
+use Illuminate\View\View;
 
 class EnrolmentController extends Controller
 {
@@ -20,7 +19,7 @@ class EnrolmentController extends Controller
     /**
      * Display a listing of the enrolments.
      */
-    public function index(): InertiaResponse
+    public function index(): View|RedirectResponse
     {
         // Check policy
         $this->authorize('viewAny', Enrolment::class);
@@ -28,16 +27,13 @@ class EnrolmentController extends Controller
         // Get all enrolments
         $enrolments = $this->enrolmentService->getEnrolmentList(15);
 
-        // Render the enrolments index page with Inertia
-        return Inertia::render('Admin/Enrolment/Index', [
-            'enrolments' => $enrolments,
-        ]);
+        return view('admin.enrolment.index', compact('enrolments'));
     }
 
     /**
      * Show the form for creating a new resource/enrolment.
      */
-    public function create(User $user): RedirectResponse|InertiaResponse
+    public function create(User $user): View|RedirectResponse
     {
         // Check policy
         if (Gate::denies('create', [Enrolment::class, $user])) {
@@ -56,13 +52,7 @@ class EnrolmentController extends Controller
             ? Course::All()
             : Course::where('created_by', auth()->id())->get();
 
-        // Render the enrolment creation page with Inertia
-        return Inertia::render('Admin/Enrolment/Create', [
-            'user' => $user,
-            'courses' => $courses,
-            'page_info' => $page_info,
-            'button_label' => __('buttons.enrollments.create'),
-        ]);
+        return view('admin.enrolment.create', compact(['user', 'courses', 'page_info']));
     }
 
     /**
