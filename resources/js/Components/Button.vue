@@ -14,11 +14,10 @@ defineProps({
 </script>
 
 <template>
-  <button
-    type="submit"
-    :disabled="processing"
-    class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-full shadow-sm hover:bg-indigo-700 transition duration-200 disabled:opacity-50 cursor-pointer"
-  >
-    {{ button_label }}
-  </button>
+    <button
+        type="submit"
+        :disabled="processing"
+        class="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-full shadow-sm hover:bg-indigo-700 transition duration-200 disabled:opacity-50 cursor-pointer">
+        {{ button_label }}
+    </button>
 </template>
