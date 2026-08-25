@@ -1,37 +1,37 @@
 <script setup>
 import { computed } from 'vue';
 import { route } from 'ziggy-js';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import FlashNotification from '@/Components/FlashNotification.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
+// --- Props ---
 const props = defineProps({
     records: { type: [Object, Array], required: true },
 });
 
+// --- Computed List Setup ---
 const recordList = computed(() => {
-    // Ensure props.records is treated as an array
-    const recordsArray = Array.isArray(props.records)
-        ? props.records
-        : (props.records.data ?? Object.values(props.records));
+    const recordsArray = Array.isArray(props.records) ? props.records : (props.records.data ?? Object.values(props.records));
 
     return recordsArray.flatMap((record) => {
         if (record.user && record.course) {
-            const progress = (record.user.course_progress ?? record.user.courseProgress ?? [])
-                .find((item) => item.course_id === record.course_id);
+            const progress = (record.user.course_progress ?? record.user.courseProgress ?? []).find((item) => item.course_id === record.course_id);
             const percent = Math.min(100, Math.max(0, Number(progress?.progress_percentage ?? 0)));
 
-            return [{
-                id: record.id,
-                userId: record.user_id,
-                courseId: record.course_id,
-                courseTitle: record.course.title,
-                percent,
-            }];
+            return [
+                {
+                    id: record.id,
+                    userId: record.user_id,
+                    courseId: record.course_id,
+                    courseTitle: record.course.title,
+                    percent,
+                },
+            ];
         }
 
         return (record.enrolments ?? []).map((enrolment) => {
-            const progress = (record.course_progress ?? record.courseProgress ?? [])
-                .find((item) => item.course_id === enrolment.course_id);
+            const progress = (record.course_progress ?? record.courseProgress ?? []).find((item) => item.course_id === enrolment.course_id);
             const percent = Math.min(100, Math.max(0, Number(progress?.progress_percentage ?? 0)));
 
             return {
@@ -45,93 +45,98 @@ const recordList = computed(() => {
     });
 });
 
-// Compute the total number of records and pagination links
-const totalRecords = computed(() =>
-    Array.isArray(props.records) ? props.records.length : (props.records?.total ?? recordList.value.length ?? 0)
-);
-
-const paginationLinks = computed(() =>
-    Array.isArray(props.records) ? [] : (props.records?.links ?? [])
-);
+// Computed list properties
+const totalRecords = computed(() => (Array.isArray(props.records) ? props.records.length : (props.records?.total ?? recordList.value.length ?? 0)));
+const paginationLinks = computed(() => (Array.isArray(props.records?.links) ? props.records.links : []));
 </script>
 
 <template>
-    <AuthenticatedLayout title="Training Records">
-        <div class="bg-white p-6 shadow-sm sm:rounded-lg border border-gray-200">
-            <div class="w-full text-gray-600 pl-2 text-sm mb-4">
-                Total Training Records: <span class="font-bold text-gray-900">{{ totalRecords }}</span>
+    <!-- Main Page Layout Wrapper -->
+    <AuthenticatedLayout title="My Training Records">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <!-- Page Header / Actions -->
+            <div class="flex flex-col gap-4 px-6 py-5 border-b border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">My Training Records</h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Track your course progress status, review completion statistics, and download your earned certificates.</p>
+                </div>
             </div>
 
-            <div class="overflow-x-auto bg-white rounded-lg border border-gray-200">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th
-                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                S.N.
-                            </th>
+            <!-- Flash Notification -->
+            <div class="px-6 pt-5">
+                <FlashNotification />
+            </div>
 
-                            <th
-                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Course Title
-                            </th>
-                            <th
-                                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Progress
-                            </th>
-                            <th
-                                class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th
-                                class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white">
-                        <tr v-for="(record, index) in recordList" :key="record.id"
-                            class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ (props.records?.current_page - 1)
-                                * (props.records?.per_page || 15) + index + 1 }}
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-600">{{ record.courseTitle }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
-                                        <div class="h-full rounded-full bg-indigo-600"
-                                            :style="{ width: `${record.percent}%` }">
+            <!-- Results Summary -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Total Training Records:
+                    <span class="font-bold text-gray-900 dark:text-white">{{ totalRecords }}</span>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="px-6 pb-6">
+                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                    <table class="w-full min-w-[1000px] divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th class="w-16 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">S.N.</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Course Title</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Progress</th>
+                                <th class="w-32 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Status</th>
+                                <th class="w-48 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                            <template v-if="recordList.length">
+                                <tr v-for="(record, index) in recordList" :key="record.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-150">
+                                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ (props.records?.from ?? 1) + index }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ record.courseTitle }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                                                <div class="h-full rounded-full bg-indigo-600" :style="{ width: `${record.percent}%` }"></div>
+                                            </div>
+                                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ record.percent }}%</span>
                                         </div>
-                                    </div>
-                                    <span class="text-xs font-bold text-gray-700">{{ record.percent }}%</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-center">
-                                <span
-                                    :class="record.percent === 100 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'"
-                                    class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold">
-                                    {{ record.percent === 100 ? 'Completed' : 'In Progress' }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-right">
-                                <a v-if="record.percent === 100"
-                                    :href="`${route('certificates.download', record.courseId)}?user_id=${record.userId}`"
-                                    class="text-xs font-black text-indigo-600 hover:underline">
-                                    Download Certificate
-                                </a>
-                                <span v-else class="text-xs italic text-slate-300">--</span>
-                            </td>
-                        </tr>
-                        <tr v-if="!recordList.length">
-                            <td colspan="5" class="text-center py-10 text-gray-500 text-sm font-medium">
-                                No records found.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span
+                                            :class="
+                                                record.percent === 100
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                                            "
+                                            class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                                            {{ record.percent === 100 ? 'Completed' : 'In Progress' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm font-medium">
+                                        <a
+                                            v-if="record.percent === 100"
+                                            :href="`${route('certificates.download', record.courseId)}?user_id=${record.userId}`"
+                                            class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            Download Certificate
+                                        </a>
+                                        <span v-else class="text-xs italic text-gray-400 dark:text-gray-600">--</span>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template v-else>
+                                <tr>
+                                    <td colspan="5" class="py-10 text-center text-sm font-medium text-gray-500 dark:text-gray-400">No records found.</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <Pagination v-if="paginationLinks.length" :links="paginationLinks" />
+            <!-- Table Pagination Footer -->
+            <div class="px-6 pb-6">
+                <Pagination v-if="paginationLinks.length" :links="paginationLinks" />
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

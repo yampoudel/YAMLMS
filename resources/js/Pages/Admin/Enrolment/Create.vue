@@ -5,6 +5,7 @@ import { route } from 'ziggy-js';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Button from '@/Components/Button.vue';
 
+// --- Props ---
 const props = defineProps({
     user: { type: Object, required: true },
     courses: { type: [Object, Array], required: true },
@@ -12,120 +13,109 @@ const props = defineProps({
     button_label: { type: String, required: true },
 });
 
-// Support both paginated and plain course responses from the controller.
-const courseList = computed(() => {
-    if (Array.isArray(props.courses)) {
-        return props.courses;
-    }
+// --- Computed List Setup ---
+const courseList = computed(() => (Array.isArray(props.courses) ? props.courses : (props.courses?.data ?? [])));
 
-    return props.courses?.data ?? [];
-});
-
-// Preselect the first available course for a faster enrolment workflow.
+// --- Form State ---
 const form = useForm({
     course_id: courseList.value[0]?.id ?? null,
 });
 
-const title = props.page_info?.title ?? 'Enrol User';
-const back_button = props.page_info?.back_button ?? 'Back to Users';
-
-// Submit the enrolment and preserve the current page position on validation errors.
+// --- Form Submission ---
 const submitForm = () => {
     form.post(route('enrolments.store', props.user.id), {
         preserveScroll: true,
-        onError: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+        onError: (errors) => {
+            console.log('Validation pipeline failure detected:', errors);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
     });
 };
+
+// UI text labels
+const title = props.page_info?.title ?? 'Enrol User';
+const back_button = props.page_info?.back_button ?? 'Back to Users';
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <header class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center justify-start">
+        <div class="py-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Top Header Section Bar -->
+            <header class="bg-white border-b border-gray-200 py-6 mb-6 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex-1 flex justify-start">
                         <Link
                             :href="route('users.index')"
-                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-200"
-                        >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
-                            <span>{{ back_button }}</span>
+                            {{ back_button }}
                         </Link>
                     </div>
-
-                    <div class="flex-1 text-center sm:px-4">
-                        <h1 id="page-title" class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                    <div class="flex-1 text-center">
+                        <h1 class="text-2xl font-bold text-gray-800 whitespace-nowrap">
                             {{ title }}
                         </h1>
                     </div>
-
-                    <div class="hidden sm:block sm:w-32" aria-hidden="true"></div>
+                    <div class="flex-1"></div>
                 </div>
             </header>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+            <!-- Main Form Card Container -->
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-200">
                 <form @submit.prevent="submitForm" class="space-y-6">
-                    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-                        <div>
-                            <p class="mb-3 text-base font-semibold text-gray-900">
-                                Please select a course to assign to this user:
-                            </p>
-                            <div class="space-y-1 text-gray-700">
-                                <p>User ID: {{ user.id }}</p>
-                                <p>First Name: {{ user.first_name }}</p>
-                                <p>Lastname: {{ user.last_name }}</p>
-                                <p>Email: {{ user.email }}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column: User Information Summary Display -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h2 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Target Enrolment Profile</h2>
+                            <div class="space-y-2 text-sm text-gray-700">
+                                <p>
+                                    <span class="font-semibold text-gray-900">User ID:</span>
+                                    {{ user.id }}
+                                </p>
+                                <p>
+                                    <span class="font-semibold text-gray-900">First Name:</span>
+                                    {{ user.first_name }}
+                                </p>
+                                <p>
+                                    <span class="font-semibold text-gray-900">Last Name:</span>
+                                    {{ user.last_name }}
+                                </p>
+                                <p>
+                                    <span class="font-semibold text-gray-900">Email Address:</span>
+                                    {{ user.email }}
+                                </p>
                             </div>
                         </div>
 
+                        <!-- Right Column: Course Dropdown Selection Input -->
                         <div>
-                            <label for="course_id" class="mb-3 block text-base font-semibold text-gray-900">
-                                Select Course
-                            </label>
+                            <label for="course_id" class="block text-sm font-medium text-gray-700 mb-1">Select Target Course</label>
                             <select
-                                v-model="form.course_id"
                                 id="course_id"
-                                name="course_id"
+                                v-model="form.course_id"
                                 required
-                                :aria-invalid="Boolean(form.errors.course_id)"
-                                aria-describedby="course-id-error"
-                                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option :value="null" disabled>Select a course</option>
-                                <option
-                                    v-for="course in courseList"
-                                    :key="course.id"
-                                    :value="course.id"
-                                >
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 p-2 border text-sm bg-white">
+                                <option :value="null" disabled>Select an available course</option>
+                                <option v-for="course in courseList" :key="course.id" :value="course.id">
                                     {{ course.title }}
                                 </option>
                             </select>
-
-                            <span
-                                v-if="form.errors.course_id"
-                                id="course-id-error"
-                                class="mt-2 block text-sm text-red-700"
-                                role="alert"
-                            >
+                            <span v-if="form.errors.course_id" class="text-red-700 text-sm block mt-1 font-medium">
                                 {{ form.errors.course_id }}
                             </span>
                         </div>
                     </div>
 
-                    <div class="mt-8 flex flex-col items-end gap-4 border-t border-gray-200 pt-8 sm:flex-row sm:items-center sm:justify-end">
+                    <!-- Form Action Buttons -->
+                    <div class="flex flex-col gap-4 pt-8 border-t border-gray-200 mt-8 sm:flex-row sm:items-center sm:justify-end">
                         <Link
                             :href="route('users.index')"
-                            class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-6 py-2.5 text-sm font-semibold text-gray-700 transition duration-200 hover:bg-gray-200"
-                        >
+                            class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-200 rounded-full hover:bg-gray-200 transition duration-200">
                             Cancel
                         </Link>
-                        <Button
-                            type="submit"
-                            :button_label="button_label"
-                            :processing="form.processing"
-                        />
+                        <Button type="submit" :button_label="button_label" :processing="form.processing" />
                     </div>
                 </form>
             </div>

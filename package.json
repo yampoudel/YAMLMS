@@ -14,6 +14,7 @@
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^2.1.0",
         "postcss": "^8.4.31",
+        "prettier-plugin-tailwindcss": "^0.8.1",
         "sass-embedded": "^1.98.0",
         "tailwindcss": "^4.3.2",
         "vite": "^7.3.1"
