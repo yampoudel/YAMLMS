@@ -4,19 +4,14 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrolmentController;
+use App\Http\Controllers\FrontController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TrainingRecordController;
 use App\Http\Controllers\UserController;
-use App\Models\Course;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $courses = Course::latest()->take(6)->get();
-
-    // Send Course to the frontend to view and purchase
-    return view('welcome', compact('courses'));
-});
+Route::get('/', [FrontController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
