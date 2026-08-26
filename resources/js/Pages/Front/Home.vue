@@ -249,24 +249,29 @@ const currentYear = new Date().getFullYear();
                             class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                             01
                         </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-1.5">Staff Onboarding Loops</h3>
-                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500">
-                            Completely automate corporate entry pipelines. Audit and guarantee every user processes standardized, secure instructional data from day one.
-                        </p>
+                        <h3 class="text-base font-bold text-slate-900 mb-1.5">Student Dashboard</h3>
+                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500">Track your course progress, view your lessons, and manage your learning account easily in one clean portal.</p>
                     </div>
+
                     <!-- Service card index row loop 2 -->
                     <div class="relative flex flex-col items-start p-6 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md transition group">
                         <div
                             class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                             02
                         </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-1.5">Compliance Tracking</h3>
-                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500">
-                            Track high-stakes safety and regulatory records. Access precise automated verification reports optimized for immediate compliance submission.
-                        </p>
+                        <h3 class="text-base font-bold text-slate-900 mb-1.5">Admin Management</h3>
+                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500">Create, update, and manage your courses or check user registration metrics using our simple tool tools.</p>
                     </div>
+
                     <!-- Service card index row loop 3 -->
-                    <div class="relative flex flex-col items-start p-6 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md transition group"></div>
+                    <div class="relative flex flex-col items-start p-6 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md transition group">
+                        <div
+                            class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            03
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1.5">Course Marketplace</h3>
+                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500">Browse our open public course catalog, view flexible pricing options, and join to unlock learning paths.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -348,15 +353,7 @@ const currentYear = new Date().getFullYear();
 
                     <!-- Enrollment action buttons -->
                     <div class="p-5 pt-0 space-y-3">
-                        <div class="flex items-center justify-between border-t border-slate-100 pt-3 text-xs font-bold text-slate-400">
-                            <span>Price:</span>
-                            <span :class="course.price && course.price > 0 ? 'text-slate-900' : 'text-emerald-600'">
-                                {{ course.price && course.price > 0 ? `$${course.price} AUD` : 'Lifetime Free' }}
-                            </span>
-                        </div>
-
                         <!-- For logged-in users -->
-                        ) -->
                         <template v-if="auth?.user">
                             <Link
                                 :href="route('dashboard')"
