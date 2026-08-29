@@ -25,6 +25,7 @@
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^41.4.2",
         "@inertiajs/vue3": "^3.6.1",
+        "@stripe/stripe-js": "^9.14.0",
         "vue": "^3.5.39",
         "ziggy-js": "^2.6.3"
     }
