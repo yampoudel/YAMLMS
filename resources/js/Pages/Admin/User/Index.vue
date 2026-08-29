@@ -175,9 +175,7 @@ const paginationLinks = computed(() => (Array.isArray(props.users?.links) ? prop
                                 <th class="w-28 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Role</th>
                                 <th class="w-32 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Login</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Email</th>
-                                <!-- Minimized status column to w-24 -->
                                 <th class="w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">Status</th>
-                                <!-- Increased action column to w-48 -->
                                 <th
                                     v-if="currentUser?.role === 'Admin' || currentUser?.role === 'Teacher'"
                                     class="w-48 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">

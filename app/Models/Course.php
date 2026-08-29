@@ -40,14 +40,14 @@ class Course extends Model
     // Get the list of users belongs to this course
     public function users(): BelongsToMany
     {
-        return $this->BelongsToMany(
+        return $this->belongsToMany(
             User::class,
             'lms_enrolments',
-            'id',
             'course_id',
-            'status',
             'user_id'
-        );
+        )
+            ->withPivot('status', 'enrolled_at', 'enrolled_by')
+            ->withTimestamps();
     }
 
     // Get lessons for this course
