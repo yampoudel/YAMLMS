@@ -55,8 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Training record module
     Route::get('trainingrecord', [TrainingRecordController::class, 'index'])->name('trainingrecord.index');
 
-    // Certificate Module
-    Route::get('/course/{course}/certificate', [CertificateController::class, 'download'])->name('certificates.download');
+    // Certificate Endpoint (Secure Workspace)
+    Route::get('/course/{course}/certificate', [CertificateController::class, 'view'])->name('certificates.view');
 });
 
 // ADMIN ONLY: Protected by 'admin' middleware
