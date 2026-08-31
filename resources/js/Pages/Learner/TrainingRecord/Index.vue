@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import Pagination from '@/Components/Pagination.vue';
 import FlashNotification from '@/Components/FlashNotification.vue';
@@ -112,13 +113,14 @@ const paginationLinks = computed(() => (Array.isArray(props.records?.links) ? pr
                                             {{ record.percent === 100 ? 'Completed' : 'In Progress' }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm font-medium">
-                                        <a
+                                    <td class="w-48 px-4 py-3 text-center text-sm font-medium">
+                                        <Link
                                             v-if="record.percent === 100"
-                                            :href="`${route('certificates.download', record.courseId)}?user_id=${record.userId}`"
+                                            :href="route('certificates.view', { course: record.courseId, user_id: record.userId })"
+                                            target="_blank"
                                             class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                            Download Certificate
-                                        </a>
+                                            View Certificate
+                                        </Link>
                                         <span v-else class="text-xs italic text-gray-400 dark:text-gray-600">--</span>
                                     </td>
                                 </tr>

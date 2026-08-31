@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Enrolment;
-use App\Models\User;
 use App\Models\Order;
+use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Stripe\StripeClient;
 
 class DashboardController extends Controller
 {
@@ -49,7 +50,7 @@ class DashboardController extends Controller
             // Synchronous fallback handler to capture instant payment returns
             if (request()->get('payment_success') === '1') {
                 try {
-                    $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+                    $stripe = new StripeClient(env('STRIPE_SECRET'));
                     $pendingOrders = Order::where('user_id', $user->id)
                         ->where('status', 'Pending')
                         ->get();
