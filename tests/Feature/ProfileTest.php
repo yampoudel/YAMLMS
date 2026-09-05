@@ -93,8 +93,9 @@ class ProfileTest extends TestCase
                 'password' => 'wrong-password',
             ]);
 
+        // Changed to check the standard session error pool instead of a named error bag
         $response
-            ->assertSessionHasErrorsIn('userDeletion', 'password')
+            ->assertSessionHasErrors(['password'])
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());

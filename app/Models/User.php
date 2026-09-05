@@ -45,6 +45,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $appends = [
+        'name',
         'image_path_url',
     ];
 
