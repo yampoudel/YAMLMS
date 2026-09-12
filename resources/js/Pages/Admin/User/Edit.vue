@@ -7,28 +7,37 @@ import Button from '@/Components/Button.vue';
 
 // --- Props ---
 const props = defineProps({
-    course: { type: [Object, Array], required: true },
-    lessons: { type: [Object, Array], required: true },
+    user: { type: Object, required: true },
     page_info: { type: [Object, Array], required: true },
     button_label: { type: String, required: true },
 });
 
 // --- Form State ---
 const form = useForm({
-    title: props.course?.title ?? '',
-    description: props.course?.description ?? '',
-    price: props.course?.price ?? '',
-    status: props.course?.status ?? 'Active',
+    role: props.user?.role ?? 'Admin',
+    login: props.user?.login ?? '',
+    first_name: props.user?.first_name ?? '',
+    last_name: props.user?.last_name ?? '',
+    email: props.user?.email ?? '',
+    password: '', // Leave empty to avoid altering existing passwords unless typed
+    status: props.user?.status ?? 'Active',
+    birth_date: props.user?.birth_date ?? '',
+    phone: props.user?.phone ?? '',
+    mobile: props.user?.mobile ?? '',
+    country: props.user?.country ?? '',
+    city: props.user?.city ?? '',
+    postcode: props.user?.postcode ?? '',
+    suburb: props.user?.suburb ?? '',
     image_path: undefined,
     _method: 'PUT',
 });
 
 // --- Form Submission ---
 const submitForm = () => {
-    const courseId = props.course?.id;
-    if (!courseId) return;
+    const userId = props.user?.id;
+    if (!userId) return;
 
-    form.post(route('courses.update', { course: courseId }), {
+    form.post(route('users.update', { user: userId }), {
         forceFormData: true,
         preserveScroll: true,
         onError: (errors) => {
@@ -39,7 +48,7 @@ const submitForm = () => {
 
 // --- Image State & Validation ---
 const imageError = ref('');
-const previewImage = ref(props.course?.course_image_url ?? '');
+const previewImage = ref(props.user?.image_path_url ?? '');
 
 const handleImagePreview = (e) => {
     imageError.value = '';
@@ -47,7 +56,7 @@ const handleImagePreview = (e) => {
 
     if (!file) {
         form.image_path = null;
-        previewImage.value = props.course?.course_image_url ?? '';
+        previewImage.value = props.user?.image_path ?? '';
         return;
     }
 
@@ -70,7 +79,7 @@ const handleImagePreview = (e) => {
         imageError.value = 'The image must not be greater than 2MB.';
         e.target.value = '';
         form.image_path = null;
-        previewImage.value = props.course?.course_image_url ?? '';
+        previewImage.value = props.user?.image_path ?? '';
         return;
     }
 
@@ -82,9 +91,9 @@ const handleImagePreview = (e) => {
     form.image_path = file;
 };
 
-// UI text labels
-const title = props.page_info?.title ?? 'Edit Course';
-const back_button = props.page_info?.back_button ?? 'Back To Courses';
+// --- UI Text Labels ---
+const title = props.page_info?.title ?? 'Edit User';
+const back_button = props.page_info?.back_button ?? 'Back To Users';
 </script>
 
 <template>
