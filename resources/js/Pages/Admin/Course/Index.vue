@@ -12,7 +12,7 @@ const props = defineProps({
     filters: { type: Object, required: false, default: () => ({}) },
 });
 
-// Opens search panel on load if '?search' exists in the URL (SSR-safe)
+// --- Opens search panel on load if '?search' exists in the URL (SSR-safe) ---
 const isSearchOpen = ref(typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('search'));
 
 // --- Form State & Watchers ---
@@ -55,15 +55,15 @@ const deleteCourse = (id) => {
     }
 };
 
-// --- Formatters ---
-// Formats the creator's full name cleanly and handles missing names safely
+// --- Formatters --
+// -- Formats the creator's full name cleanly and handles missing names safely --
 const getCreatorName = (creator) => {
     if (!creator) return 'N/A';
 
     return [creator.first_name, creator.last_name].filter(Boolean).join(' ') || 'N/A';
 };
 
-// Computed list properties
+// -- Computed List Properties --
 const courseList = computed(() => (Array.isArray(props.courses) ? props.courses : (props.courses?.data ?? [])));
 const totalCourses = computed(() => props.courses?.total ?? courseList.value.length ?? 0);
 const paginationLinks = computed(() => (Array.isArray(props.courses?.links) ? props.courses.links : [])); // Fixed: Bound safely to props.courses
@@ -73,7 +73,6 @@ const paginationLinks = computed(() => (Array.isArray(props.courses?.links) ? pr
     <!-- Main Page Layout Wrapper -->
     <AuthenticatedLayout title="Courses">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-            <!-- Page Header / Actions -->
             <!-- Page Header / Actions -->
             <div class="flex flex-col gap-4 px-6 py-5 border-b border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -178,14 +177,10 @@ const paginationLinks = computed(() => (Array.isArray(props.courses?.links) ? pr
                                 <tr v-for="(course, index) in courseList" :key="course.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-150">
                                     <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ (props.courses?.from ?? 1) + index }}</td>
                                     <td class="px-4 py-3 text-sm">
-                                        <div class="w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-800">
-                                            <!-- Fixed fallback avatar string logic pattern -->
-                                            <img
-                                                :src="course.course_image_url || `https://ui-avatars.com{encodeURIComponent(course.title ?? 'Course')}&color=7F9CF5&background=EBF4FF`"
-                                                :alt="course.title + ' Thumbnail'"
-                                                class="w-full h-full object-cover"
-                                                loading="lazy" />
-                                        </div>
+                                        <img
+                                            :src="course.course_image_url || `https://ui-avatars.com{encodeURIComponent(course.title ?? 'Course')}&color=7F9CF5&background=EBF4FF`"
+                                            :alt="course.title + ' Thumbnail'"
+                                            class="w-8 h-8 rounded-full object-cover border dark:border-gray-600" />
                                     </td>
                                     <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{{ course.title }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">{{ course.description }}</td>

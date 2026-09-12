@@ -57,7 +57,7 @@ const deleteUser = (id) => {
     }
 };
 
-// Computed list properties
+// --- Computed List Properties ---
 const userList = computed(() => (Array.isArray(props.users) ? props.users : (props.users?.data ?? [])));
 const totalUsers = computed(() => props.users?.total ?? userList.value.length ?? 0);
 const paginationLinks = computed(() => (Array.isArray(props.users?.links) ? props.users.links : []));

@@ -32,7 +32,7 @@ const handleImageUpload = (event) => {
         return;
     }
 
-    // Convert binary file safely inside JavaScript memory
+    // ---Convert binary file safely inside JavaScript memory --
     previewImage.value = window.URL.createObjectURL(file);
     form.image_path = file;
 };
@@ -48,7 +48,7 @@ const submitForm = () => {
     });
 };
 
-// UI text labels
+// --- UI Text Labels ---
 const title = props.page_info?.title ?? 'Add New Course';
 const back_button = props.page_info?.back_button ?? 'Back To Courses';
 </script>

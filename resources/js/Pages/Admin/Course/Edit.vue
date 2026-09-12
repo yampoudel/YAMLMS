@@ -37,7 +37,7 @@ const submitForm = () => {
     });
 };
 
-// --- Image State & Validation ---
+// --- Image State & Validation --
 const imageError = ref('');
 const previewImage = ref(props.course?.course_image_url ?? '');
 
@@ -82,7 +82,7 @@ const handleImagePreview = (e) => {
     form.image_path = file;
 };
 
-// UI text labels
+// --- UI Text Labels ---
 const title = props.page_info?.title ?? 'Edit Course';
 const back_button = props.page_info?.back_button ?? 'Back To Courses';
 </script>
