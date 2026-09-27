@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\CourseCompleted;
 use App\Models\Enrolment;
 use App\Models\Order;
 use App\Models\User;
@@ -27,7 +28,6 @@ class DashboardController extends Controller
 
         // Staff Routing (Admin & Teacher)
         if ($user->isAdmin() || $user->isTeacher()) {
-
             $data['recent_users'] = User::latest()->take(5)->get()->values();
 
             if ($user->isAdmin()) {
@@ -72,25 +72,53 @@ class DashboardController extends Controller
                 }
             }
 
+            // Optimization: Fetch bulk lookups keyed by course_id to avoid N+1 queries
+            $ordersMap = Order::where('user_id', $user->id)
+                ->get()
+                ->keyBy('course_id');
+
+            $completionsMap = CourseCompleted::where('user_id', $user->id)
+                ->get()
+                ->keyBy('course_id');
+
+            // Fetch courses from user relationship
             $data['enrolled_courses'] = $user->courses()
                 ->with(['creator'])
                 ->withCount('lessons')
                 ->get()
-                ->map(function ($course) use ($user) {
-                    // Check pending order
-                    $existingOrder = Order::where('user_id', $user->id)
-                        ->where('course_id', $course->id)
-                        ->where('status', 'Pending')
-                        ->first();
+                ->map(function ($course) use ($ordersMap, $completionsMap) {
+                    // Pull matched records safely out of memory maps
+                    $orderRecord = $ordersMap->get($course->id);
+                    $courseCompleted = $completionsMap->get($course->id);
 
-                    // Get latest enrolment status
-                    $liveEnrolment = Enrolment::where('user_id', $user->id)
-                        ->where('course_id', $course->id)
-                        ->first();
+                    // Fetch the real first lesson ID dynamically for this course to avoid routing mismatches
+                    $firstLesson = $course->lessons()->orderBy('id', 'asc')->first();
+                    $course->pivot->first_lesson_id = $firstLesson ? $firstLesson->id : null;
 
-                    // Sync pivot values for Vue
-                    $course->pivot->status = $liveEnrolment ? $liveEnrolment->status : 'Pending_Payment';
-                    $course->pivot->stripe_client_secret = $existingOrder ? $existingOrder->stripe_payment_intent_id : null;
+                    // Map status explicitly from the Order table record state
+                    if ($orderRecord && $orderRecord->status === 'Completed') {
+                        $course->pivot->status = 'Active';
+                    } else {
+                        $course->pivot->status = 'Pending_Payment';
+                    }
+
+                    $course->pivot->stripe_client_secret = $orderRecord ? $orderRecord->stripe_payment_intent_id : null;
+
+                    // Evaluate completion states clearly from lms_courses_completed table
+                    if ($courseCompleted) {
+                        $course->pivot->completion_status = $courseCompleted->status;
+                        $course->pivot->progress_percentage = (int) $courseCompleted->progress_percentage;
+                    } else {
+                        $course->pivot->completion_status = 'Not_Started';
+                        $course->pivot->progress_percentage = 0;
+                    }
+
+                    // Safety Override — If progress reads 100%, force status metrics to Active & Completed
+                    if ($course->pivot->completion_status === 'Completed' || $course->pivot->progress_percentage >= 100) {
+                        $course->pivot->status = 'Active';
+                        $course->pivot->completion_status = 'Completed';
+                        $course->pivot->progress_percentage = 100;
+                    }
 
                     return $course;
                 })

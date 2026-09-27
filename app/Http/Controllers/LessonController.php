@@ -6,13 +6,13 @@ use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\LessonCompleted;
 use App\Services\EmailService;
 use App\Services\LessonService;
 use App\Services\ProgressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use inertia\Response as InertiaResponse;
 
@@ -164,23 +164,43 @@ class LessonController extends Controller
 
     /**
      * Show course player
-     *
-     * @param  Lesson  $lessons
      */
-    public function play(Course $course, ?Lesson $lesson = null): View
+    public function play(Course $course, ?Lesson $lesson = null): InertiaResponse
     {
         $user = auth()->user();
 
-        // This forces a clean, fresh query to the lms_lessons_completed table
-        $user->load('completedLessons');
+        // Fetch the list of completed lesson IDs for this user and course
+        $completedIds = LessonCompleted::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->pluck('lesson_id')
+            ->map(fn ($id) => (int) $id)
+            ->toArray();
 
-        // If no specific lesson requested get first by position
+        // Ensure that the current lesson is set to the first lesson if none is provided, and that it is marked as completed if it exists in the completed IDs
         $current_lesson = $lesson ?? $course->lessons()->orderBy('position', 'asc')->first();
 
-        // Get list of lessons for sidebars
-        $lessons = $course->lessons()->orderBy('position', 'asc')->get();
+        if ($current_lesson) {
+            $current_lesson->completed_ids = $completedIds;
+        }
 
-        return view('learner.course-player', compact('course', 'current_lesson', 'lessons'));
+        // Calculate the course progress percentage for this user
+        $totalLessonsCount = $course->lessons()->count();
+        $course->progress_percentage = $totalLessonsCount > 0
+            ? (int) round((count($completedIds) / $totalLessonsCount) * 100)
+            : 0;
+
+        // Fetch all lessons for this course in order and mark them as completed based on the completed IDs
+        $lessons = $course->lessons()->orderBy('position', 'asc')->get()->map(function ($l) use ($completedIds) {
+            $l->is_completed = in_array((int) $l->id, $completedIds, true);
+
+            return $l;
+        });
+
+        return Inertia::render('Learner/CoursePlayer', [
+            'course' => $course,
+            'current_lesson' => $current_lesson,
+            'lessons' => $lessons,
+        ]);
     }
 
     /**
@@ -199,26 +219,37 @@ class LessonController extends Controller
      */
     public function complete(Course $course, Lesson $lesson): RedirectResponse
     {
-        // Mark current lesson as complete
-        $this->progressService->completeLesson(auth()->user(), $course, $lesson);
+        $user = auth()->user();
 
-        // Find the next lesson by position
-        $next_lesson = $course->lessons()
-            ->where('position', '>', $lesson->position)
+        // Mark the lesson as completed for the user and course
+        $this->progressService->completeLesson($user, $course, $lesson);
+
+        // Fetch all lessons for this course in order to determine the next lesson
+        $orderedLessons = $course->lessons()
             ->orderBy('position', 'asc')
-            ->first();
+            ->orderBy('id', 'asc')
+            ->get();
 
-        // Redirect to next lesson if it exists
+        // Determine the index of the current lesson in the ordered list to find the next lesson
+        $currentIndex = $orderedLessons->search(function ($item) use ($lesson) {
+            return (int) $item->id === (int) $lesson->id;
+        });
+
+        // Determine the next lesson in the sequence, if it exists
+        $next_lesson = ($currentIndex !== false && isset($orderedLessons[$currentIndex + 1]))
+            ? $orderedLessons[$currentIndex + 1]
+            : null;
+
+        // If a next lesson exists, redirect to it with a success message; otherwise, send completion email and redirect to dashboard
         if ($next_lesson) {
-            return redirect()->route('lessons.play', [$course, $next_lesson])
+            return to_route('lessons.play', ['course' => $course->id, 'lesson' => $next_lesson->id])
                 ->with('success', 'Nice job! On to the next lesson.');
         }
 
-        // If no next lesson, course is finished
-        // Send course completed email to the learner
-        $this->emailService->sendCourseCompletedEmail(auth()->user(), $course);
+        // Send completion email and redirect to the dashboard when the path is fully cleared
+        $this->emailService->sendCourseCompletedEmail($user, $course);
 
-        return redirect()->route('dashboard')
+        return to_route('dashboard')
             ->with('success', 'Congratulations! Course has been completed: '.$course->title);
     }
 }

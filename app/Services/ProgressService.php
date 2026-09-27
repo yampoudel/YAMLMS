@@ -33,7 +33,7 @@ class ProgressService
     {
         $total = $course->lessons()->count();
 
-        // if there is no lessons in that course
+        // if there are no lessons in that course
         if ($total === 0) {
             return 0;
         }
@@ -68,13 +68,16 @@ class ProgressService
      */
     public function completeLesson(User $user, Course $course, Lesson $lesson): void
     {
-        // Record that this specific lesson is done
+        // Mark the lesson as completed for the user and course
         LessonCompleted::firstOrCreate(
             ['user_id' => $user->id, 'lesson_id' => $lesson->id],
-            ['course_id' => $course->id, 'course_id' => $course->id, 'completed_at' => now()]
+            [
+                'course_id' => $course->id,
+                'completed_at' => now(),
+            ]
         );
 
-        // update the overall course percentage
+        // Update the course progress after marking the lesson as completed
         $this->updateCourseProgress($user, $course);
     }
 }

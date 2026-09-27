@@ -118,11 +118,6 @@ const closeSuccessBanner = () => {
 };
 
 // --- Helpers ---
-const getCourseProgress = (courseId) => {
-    if (!user.value?.course_progress) return { progress_percentage: 0, status: 'Not Started' };
-    return user.value.course_progress.find((p) => p.course_id === courseId) ?? { progress_percentage: 0, status: 'Not Started' };
-};
-
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(amount);
 };
@@ -130,16 +125,14 @@ const formatCurrency = (amount) => {
 
 <template>
     <AuthenticatedLayout title="My Learning">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 light text-slate-900">
             <div class="mb-8">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">My Learning Journey</h3>
 
-                <!-- Flash Notification Component -->
                 <div class="mb-5">
                     <FlashNotification />
                 </div>
 
-                <!-- Payment Success Alert Banner -->
                 <div
                     v-if="showPaymentSuccess"
                     id="payment-success-alert"
@@ -160,116 +153,137 @@ const formatCurrency = (amount) => {
                         @click="closeSuccessBanner"
                         class="text-emerald-400 hover:text-emerald-600 focus:outline-none p-1 rounded-lg hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
 
-                <!-- No courses assigned -->
                 <template v-if="!data.enrolled_courses || data.enrolled_courses.length === 0">
                     <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-8 mb-8 rounded-xl text-center">
                         <p class="text-blue-700 dark:text-blue-300 font-medium">You aren't enrolled in any courses yet.</p>
                     </div>
                     <div class="text-center">
                         <Link :href="route('courses.index')" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-full shadow-sm hover:bg-blue-700 transition-all duration-200">
-                            Browse Course
+                            Browse Courses
                         </Link>
                     </div>
                 </template>
-                <!-- Enrolled courses list -->
+
                 <template v-else>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                         <div
                             v-for="course in data.enrolled_courses"
                             :key="course.id"
-                            class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-md transition flex flex-col h-full">
-                            <!-- Card Background Thumbnail Banner Core -->
-                            <div class="h-32 bg-indigo-600 flex items-center justify-center relative">
-                                <template v-if="course.image_path">
-                                    <img :src="`/storage/${course.image_path}`" :alt="course.title" class="w-full h-full object-cover select-none" />
-                                </template>
-                                <template v-else>
-                                    <span class="text-white text-3xl font-bold uppercase">{{ course.title.substring(0, 1) }}</span>
-                                </template>
-
-                                <!-- Show progressive percentage badge conditionally -->
-                                <div
-                                    v-if="getCourseProgress(course.id).progress_percentage > 0 && course.pivot?.status !== 'Pending_Payment'"
-                                    class="absolute bottom-2 right-2 bg-white/90 dark:bg-gray-900/90 px-2 py-1 rounded-lg text-[10px] font-bold text-indigo-700 dark:text-indigo-400">
-                                    {{ getCourseProgress(course.id).progress_percentage }}% Done
-                                </div>
+                            class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-md transition flex flex-col h-fit group">
+                            <div class="w-full h-44 bg-slate-100 dark:bg-gray-800 relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
+                                <img
+                                    v-if="course.course_image_url"
+                                    :src="course.course_image_url"
+                                    :alt="course.title"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             </div>
 
-                            <!-- Course info container -->
-                            <div class="p-5 flex-1 flex flex-col">
-                                <h4 class="font-bold text-gray-900 dark:text-white mb-1 px-4 truncate">{{ course.title }}</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 px-4 line-clamp-2">{{ course.description }}</p>
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span
+                                            class="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                                            :class="course.pivot?.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'">
+                                            {{ course.pivot?.status === 'Active' ? 'Access Granted' : 'Pending Payment' }}
+                                        </span>
+                                        <span class="text-xs font-medium text-gray-400 italic">{{ course.lessons_count }} Lessons</span>
+                                    </div>
 
-                                <div class="mt-auto">
-                                    <!-- Stripe payment options -->
-                                    <template v-if="course.pivot?.status === 'Pending_Payment'">
-                                        <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3">
-                                            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 font-medium px-1">
-                                                <span>Course Price:</span>
-                                                <span class="text-gray-900 dark:text-white font-bold">{{ formatCurrency(course.price) }}</span>
-                                            </div>
+                                    <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-1">
+                                        {{ course.title }}
+                                    </h3>
+                                    <p class="text-xs text-gray-400 mb-4">
+                                        By
+                                        <span class="font-bold text-gray-600 dark:text-gray-300">{{ course.creator?.name || 'Instructor' }}</span>
+                                    </p>
+                                </div>
 
-                                            <!-- Stripe input fields -->
-                                            <div
-                                                v-show="activeStripeContainers[course.id]"
-                                                class="my-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-left">
-                                                <form :id="`payment-form-${course.id}`" @submit.prevent="handlePaymentSubmit(course.id)">
-                                                    <div :id="`payment-element-${course.id}`" class="mb-4"></div>
-                                                    <button
-                                                        type="submit"
-                                                        :disabled="processingPayments[course.id]"
-                                                        :id="`submit-btn-${course.id}`"
-                                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                                        {{ processingPayments[course.id] ? 'Processing...' : 'Confirm Payment' }}
-                                                    </button>
-                                                    <div :id="`error-message-${course.id}`" class="text-red-500 mt-2 text-xs hidden"></div>
-                                                </form>
-                                            </div>
+                                <div v-if="course.pivot?.status === 'Active'" class="space-y-2 mt-4">
+                                    <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                        <span>Progress Status</span>
+                                        <span :class="course.pivot?.completion_status === 'Completed' ? 'text-emerald-600 font-bold' : 'text-indigo-600'">
+                                            {{ course.pivot?.completion_status === 'Completed' ? 'Completed!' : `${course.pivot?.progress_percentage ?? 0}%` }}
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden border border-gray-50 dark:border-gray-500">
+                                        <div
+                                            class="h-full rounded-full transition-all duration-500 ease-out"
+                                            :class="course.pivot?.completion_status === 'Completed' ? 'bg-emerald-500' : 'bg-indigo-600'"
+                                            :style="{ width: (course.pivot?.completion_status === 'Completed' ? 100 : (course.pivot?.progress_percentage ?? 0)) + '%' }"></div>
+                                    </div>
+                                </div>
 
-                                            <!-- Checkout Trigger Button -->
-                                            <button
-                                                type="button"
-                                                @click="openStripeModal(course.id)"
-                                                :id="`buy-btn-${course.id}`"
-                                                class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-sm focus:outline-none">
-                                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                                                    <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                                <div v-else class="mt-4 pt-4 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Course Price:</span>
+                                    <span class="text-lg font-black text-indigo-600 dark:text-indigo-400">
+                                        {{ formatCurrency(course.price ?? 0) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-4">
+                                <div v-if="course.pivot?.status !== 'Active'" class="w-full">
+                                    <button
+                                        @click="openStripeModal(course.id)"
+                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all">
+                                        {{ activeStripeContainers[course.id] ? 'Cancel Checkout' : 'Pay Now & Start' }}
+                                    </button>
+
+                                    <div
+                                        v-show="activeStripeContainers[course.id]"
+                                        class="mt-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-inner transition-all duration-300">
+                                        <div :id="`payment-element-${course.id}`" class="mb-4"></div>
+                                        <div :id="`error-message-${course.id}`" class="hidden mb-3 p-3 bg-rose-50 text-rose-700 text-xs font-bold rounded-lg border border-rose-200"></div>
+                                        <button
+                                            @click="handlePaymentSubmit(course.id)"
+                                            type="button"
+                                            :disabled="processingPayments[course.id]"
+                                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest py-3 rounded-xl transition shadow-md disabled:opacity-50">
+                                            {{ processingPayments[course.id] ? 'Processing Order...' : 'Confirm Secure Payment' }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div v-else class="w-full flex flex-col gap-2">
+                                    <template v-if="course.pivot?.completion_status === 'Completed'">
+                                        <div class="grid grid-cols-2 gap-3 w-full items-center">
+                                            <Link
+                                                :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                                class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-wider py-3.5 px-3 rounded-xl text-center shadow-md transition-all active:scale-95">
+                                                Review Course
+                                            </Link>
+                                            <Link
+                                                :href="route('certificates.view', { course: course.id, user_id: user?.id })"
+                                                target="_blank"
+                                                class="inline-flex items-center justify-center gap-1.5 bg-white dark:bg-gray-800 border-2 border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-wider py-3 px-3 rounded-xl text-center shadow-sm hover:shadow transition-all active:scale-95">
+                                                <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                 </svg>
-                                                {{ activeStripeContainers[course.id] ? 'Close Checkout Panel' : 'Buy Now with Stripe' }}
-                                            </button>
-                                        </div>
-                                    </template>
-
-                                    <!-- Course progress layout -->
-                                    <template v-else-if="course.pivot?.status === 'Active' || course.pivot?.status === 'Completed'">
-                                        <!-- Show progress bar -->
-                                        <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mb-4">
-                                            <div class="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" :style="{ width: `${getCourseProgress(course.id).progress_percentage}%` }"></div>
-                                        </div>
-
-                                        <div class="flex items-center justify-between pt-4 border-t border-gray-50 dark:border-gray-800">
-                                            <span class="text-xs px-4 py-2 font-medium text-gray-400 dark:text-gray-500">{{ course.lessons_count ?? 0 }} Lessons</span>
-
-                                            <!-- Start or Resume navigation -->
-                                            <Link
-                                                v-if="getCourseProgress(course.id).status === 'Not Started'"
-                                                :href="route('lessons.start', course.id)"
-                                                class="text-sm px-4 py-2 font-bold text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition">
-                                                Start Course →
-                                            </Link>
-                                            <Link
-                                                v-else
-                                                :href="route('lessons.play', course.id)"
-                                                class="text-sm px-4 py-2 font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition">
-                                                Resume Course →
+                                                Certificate
                                             </Link>
                                         </div>
                                     </template>
+
+                                    <Link
+                                        v-else-if="course.pivot?.completion_status === 'In_Progress'"
+                                        :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                        class="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all active:scale-95">
+                                        Resume Course
+                                    </Link>
+
+                                    <Link
+                                        v-else
+                                        :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                        class="w-full block bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all active:scale-95">
+                                        Start Course
+                                    </Link>
                                 </div>
                             </div>
                         </div>
