@@ -45,7 +45,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        // Student routing
+        // Learner Routing
         if ($user->isLearner()) {
             // Synchronous fallback handler to capture instant payment returns
             if (request()->get('payment_success') === '1') {
@@ -72,7 +72,7 @@ class DashboardController extends Controller
                 }
             }
 
-            // Optimization: Fetch bulk lookups keyed by course_id to avoid N+1 queries
+            // Preload orders and completions into memory maps for efficient lookups
             $ordersMap = Order::where('user_id', $user->id)
                 ->get()
                 ->keyBy('course_id');
@@ -81,44 +81,40 @@ class DashboardController extends Controller
                 ->get()
                 ->keyBy('course_id');
 
-            // Fetch courses from user relationship
+            // Fetch enrolled courses with eager loading and map to include progress tracking
             $data['enrolled_courses'] = $user->courses()
                 ->with(['creator'])
                 ->withCount('lessons')
                 ->get()
                 ->map(function ($course) use ($ordersMap, $completionsMap) {
-                    // Pull matched records safely out of memory maps
+                    // Retrieve the corresponding order and completion records for this course
                     $orderRecord = $ordersMap->get($course->id);
                     $courseCompleted = $completionsMap->get($course->id);
 
-                    // Fetch the real first lesson ID dynamically for this course to avoid routing mismatches
+                    // Fetch the real first lesson ID dynamically for this course
                     $firstLesson = $course->lessons()->orderBy('id', 'asc')->first();
-                    $course->pivot->first_lesson_id = $firstLesson ? $firstLesson->id : null;
 
-                    // Map status explicitly from the Order table record state
-                    if ($orderRecord && $orderRecord->status === 'Completed') {
-                        $course->pivot->status = 'Active';
-                    } else {
-                        $course->pivot->status = 'Pending_Payment';
+                    // Construct a clean progress tracking object to attach to the course model
+                    $progressData = [
+                        'first_lesson_id' => $firstLesson ? $firstLesson->id : null,
+                        'status' => ($orderRecord && $orderRecord->status === 'Completed') ? 'Active' : 'Pending_Payment',
+                        'stripe_client_secret' => $orderRecord ? $orderRecord->stripe_payment_intent_id : null,
+                        'completion_status' => $courseCompleted ? $courseCompleted->status : 'Not_Started',
+                        'progress_percentage' => $courseCompleted ? (int) $courseCompleted->progress_percentage : 0,
+                    ];
+
+                    // If the course is completed or progress is 100%, ensure the status reflects completion
+                    if ($progressData['completion_status'] === 'Completed' || $progressData['progress_percentage'] >= 100) {
+                        $progressData['status'] = 'Active';
+                        $progressData['completion_status'] = 'Completed';
+                        $progressData['progress_percentage'] = 100;
                     }
 
-                    $course->pivot->stripe_client_secret = $orderRecord ? $orderRecord->stripe_payment_intent_id : null;
+                    // Attach the progress data as a clean object to the course model
+                    $course->progress = (object) $progressData;
 
-                    // Evaluate completion states clearly from lms_courses_completed table
-                    if ($courseCompleted) {
-                        $course->pivot->completion_status = $courseCompleted->status;
-                        $course->pivot->progress_percentage = (int) $courseCompleted->progress_percentage;
-                    } else {
-                        $course->pivot->completion_status = 'Not_Started';
-                        $course->pivot->progress_percentage = 0;
-                    }
-
-                    // Safety Override — If progress reads 100%, force status metrics to Active & Completed
-                    if ($course->pivot->completion_status === 'Completed' || $course->pivot->progress_percentage >= 100) {
-                        $course->pivot->status = 'Active';
-                        $course->pivot->completion_status = 'Completed';
-                        $course->pivot->progress_percentage = 100;
-                    }
+                    // Remove the pivot data to avoid exposing unnecessary relational data
+                    unset($course->pivot);
 
                     return $course;
                 })

@@ -110,7 +110,7 @@ const paginationLinks = computed(() => (Array.isArray(props.records?.links) ? pr
                                                     : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
                                             "
                                             class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold">
-                                            {{ record.percent === 100 ? 'Completed' : 'In Progress' }}
+                                            {{ record.percent === 100 ? 'Completed' : record.percent ? 'In Progress' : 'Not Started' }}
                                         </span>
                                     </td>
                                     <td class="w-48 px-4 py-3 text-center text-sm font-medium">

@@ -20,7 +20,7 @@ const stripeInstance = ref(null);
 const activeElements = ref({});
 const processingPayments = ref({});
 
-// --- Computed list properties ---
+// --- Computed Properties ---
 const data = computed(() => (Array.isArray(props.data) ? { enrolled_courses: [] } : props.data ? props.data : { enrolled_courses: [] }));
 const user = computed(() => page.props.auth?.user ?? null);
 
@@ -121,6 +121,27 @@ const closeSuccessBanner = () => {
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(amount);
 };
+
+const getStatusText = (percentage) => {
+    return percentage === 100 ? 'Completed' : percentage ? 'In Progress' : 'Not Started';
+};
+
+const getAccessBadge = (status) => {
+    return status === 'Active' ? { text: 'Access Granted', classes: 'bg-emerald-50 text-emerald-700' } : { text: 'Pending Payment', classes: 'bg-amber-50 text-amber-700' };
+};
+
+const getProgressConfig = (progress) => {
+    const isCompleted = progress?.completion_status === 'Completed';
+    const percent = progress?.progress_percentage ?? 0;
+
+    return {
+        text: getStatusText(percent),
+        percent: percent,
+        width: isCompleted ? 100 : percent,
+        textClass: isCompleted ? 'text-emerald-600 font-bold' : 'text-indigo-600',
+        barClass: isCompleted ? 'bg-emerald-500' : 'bg-indigo-600',
+    };
+};
 </script>
 
 <template>
@@ -186,15 +207,13 @@ const formatCurrency = (amount) => {
                             <div class="p-6 flex-1 flex flex-col justify-between">
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
-                                        <span
-                                            class="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-                                            :class="course.pivot?.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'">
-                                            {{ course.pivot?.status === 'Active' ? 'Access Granted' : 'Pending Payment' }}
+                                        <span class="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full" :class="getAccessBadge(course.progress?.status).classes">
+                                            {{ getAccessBadge(course.progress?.status).text }}
                                         </span>
                                         <span class="text-xs font-medium text-gray-400 italic">{{ course.lessons_count }} Lessons</span>
                                     </div>
 
-                                    <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-1">
+                                    <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tight mb-1 truncate" :title="course.title">
                                         {{ course.title }}
                                     </h3>
                                     <p class="text-xs text-gray-400 mb-4">
@@ -203,18 +222,19 @@ const formatCurrency = (amount) => {
                                     </p>
                                 </div>
 
-                                <div v-if="course.pivot?.status === 'Active'" class="space-y-2 mt-4">
+                                <div v-if="course.progress?.status === 'Active'" class="space-y-2 mt-4">
                                     <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
-                                        <span>Progress Status</span>
-                                        <span :class="course.pivot?.completion_status === 'Completed' ? 'text-emerald-600 font-bold' : 'text-indigo-600'">
-                                            {{ course.pivot?.completion_status === 'Completed' ? 'Completed!' : `${course.pivot?.progress_percentage ?? 0}%` }}
+                                        <span>
+                                            Status:
+                                            <strong class="text-indigo-600 dark:text-indigo-400 font-black uppercase ml-0.5">{{ getProgressConfig(course.progress).text }}</strong>
                                         </span>
+                                        <span :class="getProgressConfig(course.progress).textClass">{{ getProgressConfig(course.progress).percent }}%</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden border border-gray-50 dark:border-gray-500">
+                                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden border border-gray-50 dark:border-gray-950">
                                         <div
                                             class="h-full rounded-full transition-all duration-500 ease-out"
-                                            :class="course.pivot?.completion_status === 'Completed' ? 'bg-emerald-500' : 'bg-indigo-600'"
-                                            :style="{ width: (course.pivot?.completion_status === 'Completed' ? 100 : (course.pivot?.progress_percentage ?? 0)) + '%' }"></div>
+                                            :class="getProgressConfig(course.progress).barClass"
+                                            :style="{ width: getProgressConfig(course.progress).width + '%' }"></div>
                                     </div>
                                 </div>
 
@@ -225,8 +245,9 @@ const formatCurrency = (amount) => {
                                     </span>
                                 </div>
                             </div>
+
                             <div class="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-4">
-                                <div v-if="course.pivot?.status !== 'Active'" class="w-full">
+                                <div v-if="course.progress?.status !== 'Active'" class="w-full">
                                     <button
                                         @click="openStripeModal(course.id)"
                                         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all">
@@ -249,10 +270,10 @@ const formatCurrency = (amount) => {
                                 </div>
 
                                 <div v-else class="w-full flex flex-col gap-2">
-                                    <template v-if="course.pivot?.completion_status === 'Completed'">
+                                    <template v-if="course.progress?.completion_status === 'Completed'">
                                         <div class="grid grid-cols-2 gap-3 w-full items-center">
                                             <Link
-                                                :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                                :href="route('lessons.play', { course: course.id, lesson: course.progress?.first_lesson_id })"
                                                 class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-wider py-3.5 px-3 rounded-xl text-center shadow-md transition-all active:scale-95">
                                                 Review Course
                                             </Link>
@@ -272,15 +293,15 @@ const formatCurrency = (amount) => {
                                     </template>
 
                                     <Link
-                                        v-else-if="course.pivot?.completion_status === 'In_Progress'"
-                                        :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                        v-else-if="course.progress?.completion_status === 'In_Progress'"
+                                        :href="route('lessons.play', { course: course.id, lesson: course.progress?.first_lesson_id })"
                                         class="w-full block bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all active:scale-95">
                                         Resume Course
                                     </Link>
 
                                     <Link
                                         v-else
-                                        :href="route('lessons.play', { course: course.id, lesson: course.pivot?.first_lesson_id })"
+                                        :href="route('lessons.play', { course: course.id, lesson: course.progress?.first_lesson_id })"
                                         class="w-full block bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest py-3 px-4 rounded-xl text-center shadow-md transition-all active:scale-95">
                                         Start Course
                                     </Link>
