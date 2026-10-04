@@ -224,5 +224,19 @@ const isCurrentRoute = (routeName) => {
                 </Link>
             </nav>
         </div>
+
+        <!-- Bottom Section: Logout -->
+        <div class="mt-auto pb-6 px-3 border-t border-gray-100 dark:border-gray-700 pt-4">
+            <Link
+                :href="route('logout')"
+                method="post"
+                as="button"
+                class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors group">
+                <svg class="w-5 h-5 mr-3 text-red-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                LOG OUT
+            </Link>
+        </div>
     </aside>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 </script>
 
 <template>
@@ -9,10 +10,7 @@ import { route } from 'ziggy-js';
         <!-- App Logo Header Area -->
         <div>
             <Link :href="route('login')">
-                <div class="flex flex-col items-center">
-                    <span class="text-3xl font-black text-slate-950 dark:text-white font-sans tracking-widest uppercase">YAMLMS</span>
-                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 font-sans tracking-widest uppercase mt-1">Learning Workspace</span>
-                </div>
+                <ApplicationLogo />
             </Link>
         </div>
 
