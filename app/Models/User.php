@@ -89,10 +89,10 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    // Check super admin
-    public function isSuperAdmin(): bool
+    // Platform (system owner) admin, set only by artisan command, seeder or tests
+    public function isPlatformAdmin(): bool
     {
-        return $this->email === config('app.super_admin_email', env('SUPER_ADMIN_EMAIL'));
+        return (bool) $this->is_platform_admin;
     }
 
     // Check admin user
