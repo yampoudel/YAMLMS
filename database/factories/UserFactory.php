@@ -27,10 +27,10 @@ class UserFactory extends Factory
         $join = fake()->dateTimeBetween('-5 years', '-1 year');
 
         return [
-            'role' => fake()->randomElement(['Admin', 'Teacher', 'Learner']),
+            'role' => 'Learner', // safe default, use states for other roles
             'login' => Str::random(10),
-            'first_name' => fake()->firstname(),
-            'last_name' => fake()->lastname(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -61,6 +61,32 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'Learner',
+        ]);
+    }
+
+    public function teacher(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Teacher',
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Admin',
+        ]);
+    }
+
+    /**
+     * System owner. Set only via factory, seeder or artisan command,
+     * never through mass assignment.
+     */
+    public function platformAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'Admin',
+            'is_platform_admin' => true,
         ]);
     }
 }
